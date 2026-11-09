@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missão Commit — Git e GitHub do zero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#16122B;--ink2:#211B3D;--ink3:#2E2754;--line:#3B3366;--txt:#F2EFFF;--muted:#B3ABD6;--lime:#C6F432;--coral:#FF7A59;--cyan:#2CE5D6;--violet:#A78BFA;--sun:#FFD95E;--gold:#E8B04A;--red:#FF5470;--sky1:#8FD3FF;--sky2:#D7F0FF;--wall:#2B2450}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:'Nunito',system-ui,sans-serif;background:var(--ink);color:var(--txt);line-height:1.5;min-height:100vh;overflow-x:hidden}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;line-height:1.15;margin:0}
+a{color:var(--cyan)}
+button{font:inherit;cursor:pointer}
+code{font-family:'JetBrains Mono',monospace;background:#0B0918;color:var(--lime);padding:1px 6px;border-radius:6px;font-size:.92em}
+.wrap{max-width:860px;margin:0 auto;padding:10px 12px 60px}
+.btn{border:0;font-weight:800;font-size:16px;padding:12px 22px;border-radius:999px;background:var(--lime);color:var(--ink);min-height:48px;transition:transform .15s}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:transparent;color:var(--txt);border:2px solid var(--line)}
+.btn.small{font-size:14px;padding:8px 14px;min-height:40px}
+.btn.gold{background:var(--gold)}
+.hide{display:none!important}
+/* top bar */
+.top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.top .back{font-weight:800;font-size:13px;text-decoration:none;color:var(--lime);background:var(--ink2);padding:8px 12px;border-radius:999px}
+.top .sp{flex:1}
+.tog{background:var(--ink2);border:1px solid var(--line);color:var(--txt);border-radius:999px;min-height:40px;min-width:44px;padding:6px 10px;font-weight:800;font-size:14px}
+.tog.off{opacity:.45;text-decoration:line-through}
+.gemcount{background:linear-gradient(135deg,#4a3a10,#2E2754);border-color:var(--gold);color:var(--sun)}
+/* screens */
+.screen{display:none}.screen.on{display:block;animation:fadein .4s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* START */
+#start{text-align:center;padding-top:6vh}
+.logo{font-size:clamp(40px,11vw,76px);font-family:'Space Grotesk';font-weight:700;letter-spacing:-1px}
+.logo span{color:var(--lime);display:inline-block;animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{50%{text-shadow:0 0 24px rgba(198,244,50,.7);transform:translateY(-3px)}}
+.tag{color:var(--muted);font-weight:700;margin:8px 0 22px}
+.duo{display:flex;justify-content:center;gap:10px;margin:18px 0}
+.duo svg{width:110px;height:146px}
+.duo .rita{animation:hop 2.6s ease-in-out infinite}.duo .teo{animation:hop 2.6s ease-in-out .5s infinite}
+@keyframes hop{50%{transform:translateY(-8px)}}
+/* SCENE */
+.scene{position:relative;height:clamp(200px,36vh,270px);border-radius:22px;overflow:hidden;border:1px solid var(--line);background:var(--wall)}
+.scene .bg{position:absolute;inset:0;width:100%;height:100%}
+.scene.night{--sky1:#0B0E2E;--sky2:#26205A;--wall:#1C1738}
+.bg .moon,.bg .stars{opacity:0;transition:opacity .8s}.night .bg .moon,.night .bg .stars{opacity:1}
+.night .bg .sun{opacity:0}
+.bg .cloud{animation:drift 26s linear infinite}
+@keyframes drift{from{transform:translateX(-60px)}to{transform:translateX(220px)}}
+.bg .screenglow{animation:scr 3s ease-in-out infinite}
+@keyframes scr{50%{opacity:.6}}
+.char{position:absolute;bottom:-4px;width:clamp(96px,22vw,130px);height:auto;transition:transform .7s cubic-bezier(.2,.9,.3,1.2),opacity .4s,filter .4s;z-index:3}
+#cRita{left:3%}#cTeo{right:3%}
+#cRita.off{transform:translateX(-160%)}#cTeo.off{transform:translateX(160%)}
+.char .hd{transform-box:fill-box;transform-origin:50% 90%;animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{50%{transform:rotate(-2deg) translateY(-2px)}}
+.char .mouth{transform-box:fill-box;transform-origin:center}
+.char.talk .mouth{animation:talk .16s infinite alternate}
+@keyframes talk{to{transform:scaleY(2.6)}}
+.char .eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.5s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.char.dim{filter:saturate(.5) brightness(.75)}
+.char.talk{filter:none;transform:translateY(-6px) scale(1.04)}
+.char.panic{animation:shake .25s infinite}
+@keyframes shake{25%{transform:translateX(-3px) rotate(-1deg)}75%{transform:translateX(3px) rotate(1deg)}}
+.char .sweat,.duo .sweat{opacity:0}.char.panic .sweat{opacity:1;animation:drip 1s infinite}
+@keyframes drip{to{transform:translateY(8px);opacity:0}}
+.char .blush{opacity:0}.char.happy .blush{opacity:.7}
+.char.happy{animation:jump .6s ease 2}
+@keyframes jump{50%{transform:translateY(-14px)}}
+.ringtag{position:absolute;top:8px;right:8px;z-index:4;display:flex;align-items:center;gap:6px;background:rgba(11,9,24,.75);backdrop-filter:blur(4px);padding:4px 12px 4px 4px;border-radius:999px;font-weight:800;font-size:13px;border:1px solid var(--gold);color:var(--sun);white-space:nowrap}
+.ringtag svg{width:30px;height:30px}
+.chaptag{position:absolute;top:8px;left:8px;max-width:52%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:4;font-size:11px;font-weight:800;color:var(--muted);background:rgba(11,9,24,.6);padding:3px 9px;border-radius:999px}
+.dust{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(255,217,94,.6);bottom:-6px;animation:rise linear infinite;z-index:2}
+@keyframes rise{to{transform:translateY(-300px);opacity:0}}
+.gem{position:absolute;z-index:5;width:34px;height:34px;border-radius:50%;border:0;background:radial-gradient(circle,#fff6c4 0,#FFD95E 35%,rgba(232,176,74,0) 70%);color:transparent;animation:twinkle 1.6s ease-in-out infinite;padding:0}
+@keyframes twinkle{0%,100%{transform:scale(.55);opacity:.55}50%{transform:scale(1);opacity:1}}
+/* DIALOG */
+.dlg{margin-top:-16px;position:relative;z-index:6;background:var(--ink2);border:2px solid var(--line);border-radius:20px;padding:14px 16px 12px;min-height:110px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.dlg .who{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.dlg .nm{font-family:'Space Grotesk';font-weight:700;font-size:17px}
+.dlg .role{font-size:12px;color:var(--muted);font-weight:700}
+.dlg.R{border-color:var(--cyan)}.dlg.R .nm{color:var(--cyan)}
+.dlg.T{border-color:var(--coral)}.dlg.T .nm{color:var(--coral)}
+.dlg.N{border-color:var(--gold);background:#1b1530}.dlg.N .nm{color:var(--sun)}.dlg.N .txt{font-style:italic}
+.dlg .txt{font-size:17px;min-height:52px}
+.dlg .txt b{color:var(--sun)}
+.dlg .row{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+#next{animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(4px)}}
+/* STAGE */
+.stage{margin-top:14px}
+.card{background:var(--ink2);border:1px solid var(--line);border-radius:20px;padding:16px;animation:fadein .4s ease both}
+.card h3{font-size:18px;margin-bottom:10px}
+.quiz .q{font-weight:800;font-size:17px;margin-bottom:10px}
+.quiz .op{display:block;width:100%;text-align:left;background:var(--ink3);color:var(--txt);border:2px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0;font-size:16px;font-weight:700;min-height:48px}
+.quiz .op.ok{border-color:var(--lime);background:#2a3a10}
+.quiz .op.no{border-color:var(--red);animation:shake .3s 2}
+/* concept animations */
+.cx{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;min-height:150px;padding:6px}
+.fileic{background:#fff;color:#16122B;border-radius:8px;padding:8px 8px 6px;font:700 11px 'JetBrains Mono';width:96px;text-align:center;box-shadow:0 4px 0 #8c84b8;position:relative}
+.fileic::before{content:'📄';display:block;font-size:24px}
+.caos .fileic{animation:wob 1.2s ease-in-out infinite}
+.caos .fileic:nth-child(2){animation-delay:.2s}.caos .fileic:nth-child(3){animation-delay:.4s}
+@keyframes wob{25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.caos .qm{font-size:34px;animation:hop 1s infinite}
+.timeline{display:flex;align-items:center;gap:0;margin-top:14px;justify-content:center;width:100%}
+.timeline .dot{width:20px;height:20px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 5px rgba(198,244,50,.2);opacity:0;animation:pop .4s ease forwards}
+.timeline .ln{height:4px;width:54px;background:var(--line)}
+.timeline .lab{font-size:11px;color:var(--muted);text-align:center;width:74px}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.polas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.pola{background:#fff;color:#16122B;padding:8px 8px 10px;border-radius:6px;width:104px;font-size:11px;font-weight:800;text-align:center;opacity:0;animation:drop .6s ease forwards}
+.pola .ph{height:60px;border-radius:4px;margin-bottom:6px;display:grid;place-items:center;font-size:26px}
+@keyframes drop{from{opacity:0;transform:translateY(-30px) rotate(-12deg)}to{opacity:1;transform:rotate(var(--r,0deg))}}
+.zonas{position:relative;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:4px;padding:10px 0 34px}
+.zona{background:var(--ink3);border:2px dashed var(--line);border-radius:14px;padding:10px 4px;text-align:center;font-weight:800;font-size:13px;min-height:96px}
+.zona .ic{font-size:30px;display:block}
+.zona small{display:block;color:var(--muted);font-size:10.5px;font-weight:700}
+.arrow{font:700 11px 'JetBrains Mono';color:var(--lime);text-align:center;line-height:1.1}
+.arrow::after{content:'→';display:block;font-size:22px}
+.mover{position:absolute;bottom:0;left:4%;font:700 11px 'JetBrains Mono';background:#fff;color:#16122B;padding:4px 8px;border-radius:6px;animation:move 5s ease-in-out infinite}
+@keyframes move{0%,15%{left:4%}40%,55%{left:40%}80%,100%{left:74%}}
+.rede{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.rede .box{background:var(--ink3);border-radius:14px;padding:10px;text-align:center;font-weight:800;font-size:13px;width:116px}
+.rede .box .ic{font-size:30px;display:block}
+.rede .bad{border:2px solid var(--red);animation:wob 1s infinite}
+.rede .good{border:2px solid var(--lime)}
+.rede .back{font:700 12px 'JetBrains Mono';color:var(--lime);text-align:center}
+.rede .back::before{content:'←';display:block;font-size:26px;animation:pull 1.2s ease-in-out infinite}
+@keyframes pull{50%{transform:translateX(-10px)}}
+.galhos svg{width:100%;max-width:520px;height:auto;display:block;margin:0 auto}
+.galhos path,.galhos line{stroke-dasharray:600;stroke-dashoffset:600;animation:draw 2.4s ease forwards}
+.galhos .b2{animation-delay:1s}.galhos .b3{animation-delay:2s}
+.galhos circle{opacity:0;animation:pop .4s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.nuvem{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;text-align:center;gap:6px}
+.nuvem .big{font-size:44px;display:block}
+.nuvem .lane{position:relative;height:130px}
+.nuvem .ar{position:absolute;left:0;right:0;font:700 12px 'JetBrains Mono'}
+.nuvem .up{top:14px;color:var(--lime)}.nuvem .dn{bottom:14px;color:var(--cyan)}
+.nuvem .pk{position:absolute;font-size:18px}
+.nuvem .up .pk{animation:goR 2s linear infinite;top:-22px}.nuvem .dn .pk{animation:goL 2s linear infinite;top:14px}
+@keyframes goR{from{left:0}to{left:80%}}@keyframes goL{from{left:80%}to{left:0}}
+.gcwrap{display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:center}
+.gcwrap svg{width:190px;height:190px}
+.gclist{flex:1;min-width:220px}
+.gclist div{margin:8px 0;padding:8px 12px;border-radius:12px;background:var(--ink3);border-left:5px solid var(--gold);font-weight:700}
+.gclist b{color:var(--sun)}
+/* golden circle svg */
+.gc circle{stroke:var(--gold);stroke-width:2.5;transition:fill .4s}
+.gc .r-what{fill:#2a2350}.gc .r-how{fill:#3a2f6a}.gc .r-why{fill:#5b4413}
+.gc text{font:800 12px 'Nunito';fill:#F2EFFF;text-anchor:middle}
+.gc.why .r-why,.gc.how .r-how,.gc.what .r-what{fill:var(--gold)}
+.gc.why .t-why,.gc.how .t-how,.gc.what .t-what{fill:#16122B}
+.gc.why .r-why,.gc.how .r-how,.gc.what .r-what{animation:ringp 1.4s ease-in-out infinite}
+@keyframes ringp{50%{opacity:.75}}
+/* RING overlay */
+.ov{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(11,9,24,.88);backdrop-filter:blur(3px);padding:20px;animation:fadein .3s ease both}
+.ringov{text-align:center}
+.ringov svg{width:min(62vw,260px);height:auto;animation:zoom .8s cubic-bezier(.2,.9,.3,1.3) both}
+@keyframes zoom{from{transform:scale(.3) rotate(-40deg);opacity:0}to{transform:none;opacity:1}}
+.ringov h2{font-size:clamp(28px,8vw,44px);color:var(--sun);margin-top:12px;letter-spacing:1px}
+.ringov p{color:var(--muted);font-weight:700;font-size:17px;max-width:420px;margin:6px auto 0}
+/* suspense */
+#sus{background:radial-gradient(circle at 50% 50%,rgba(60,0,15,.9),rgba(5,0,5,.97))}
+#sus .box{text-align:center;max-width:480px}
+#sus .big{font-family:'Space Grotesk';font-size:clamp(26px,7vw,40px);font-weight:700;color:#ff8fa0;text-shadow:0 0 18px rgba(255,84,112,.8);animation:flick 2.2s infinite}
+@keyframes flick{0%,100%{opacity:1}42%{opacity:1}44%{opacity:.3}46%{opacity:1}70%{opacity:.85}}
+#sus .heart{font-size:54px;animation:beat 1.1s infinite}
+@keyframes beat{0%,40%,100%{transform:scale(1)}15%,55%{transform:scale(1.2)}}
+/* terminal */
+.tw{margin-top:14px;display:grid;gap:12px}
+.mission{background:linear-gradient(135deg,#2a2350,#211B3D);border:2px solid var(--gold);border-radius:18px;padding:12px 14px}
+.mission .g{font-weight:800;font-size:16px}
+.mission .g::before{content:'🎯 '}
+.mission.done{border-color:var(--lime)}
+.mission.done .g::before{content:'✅ '}
+.chip{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#0B0918;color:var(--lime);border:1px solid var(--lime);border-radius:10px;padding:8px 12px;font:700 14px 'JetBrains Mono';min-height:42px;max-width:100%;overflow-wrap:anywhere;text-align:left}
+.chip::before{content:'⌨️'}
+.why{font-size:14px;color:var(--muted);margin-top:8px}
+.tip{color:var(--sun);font-weight:700;font-size:14px;margin-top:6px}
+.term{background:#0B0918;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.term .bar{display:flex;gap:6px;padding:8px 12px;background:#141026;font:700 12px 'JetBrains Mono';color:var(--muted);align-items:center}
+.term .bar i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.term .out{height:200px;overflow-y:auto;padding:10px 12px;font:13.5px/1.5 'JetBrains Mono',monospace;white-space:pre-wrap;word-break:break-word}
+.out .c{color:#fff;font-weight:700}.out .o{color:#d8d3f5}.out .g{color:var(--lime)}.out .r{color:#ff8fa0}.out .y{color:var(--sun)}.out .m{color:#8d86b5}
+.term form{display:flex;border-top:1px solid var(--line)}
+.term .ps{padding:12px 0 12px 12px;font:700 15px 'JetBrains Mono';color:var(--lime)}
+.term input{flex:1;background:transparent;border:0;color:#fff;font:15px 'JetBrains Mono';padding:12px 8px;outline:none;min-width:0}
+.term button{background:var(--lime);border:0;font-weight:800;padding:0 16px;color:var(--ink)}
+.quick{display:flex;gap:6px;flex-wrap:wrap;padding:8px 10px;border-top:1px solid var(--line);background:#100c20}
+.quick button{background:var(--ink3);color:var(--txt);border:1px solid var(--line);border-radius:8px;font:12px 'JetBrains Mono';padding:6px 9px;min-height:34px}
+/* viz */
+.viz{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.vbox{background:var(--ink2);border:1px solid var(--line);border-radius:14px;padding:10px;min-height:86px}
+.vbox h4{margin:0 0 6px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.fchip{display:inline-block;margin:3px;padding:4px 8px;border-radius:8px;font:12px 'JetBrains Mono';background:var(--ink3);border:1px solid var(--line);color:var(--txt);animation:pop .35s ease}
+.fchip.u{border-color:var(--red);color:#ff8fa0}.fchip.m{border-color:var(--sun);color:var(--sun)}.fchip.s{border-color:var(--lime);color:var(--lime)}.fchip.d{text-decoration:line-through;border-color:var(--red);color:#ff8fa0}
+.cm{font:12px 'JetBrains Mono';margin:3px 0;animation:pop .35s ease}.cm b{color:var(--sun)}
+.legend{font-size:11.5px;color:var(--muted);margin-top:4px}
+.flash{animation:flashb .7s ease}
+@keyframes flashb{30%{box-shadow:0 0 0 3px var(--gold)}}
+pre.code{background:#0B0918;border-radius:12px;padding:10px;font:12.5px/1.5 'JetBrains Mono';white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0}
+pre.code .mk{color:var(--red);font-weight:700}pre.code .ours{color:var(--cyan)}pre.code .theirs{color:var(--coral)}
+/* home */
+.hero{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;margin:6px 0 16px}
+.hero h1{font-size:clamp(30px,8vw,48px)}.hero h1 span{color:var(--lime)}
+.hero p{color:var(--muted);font-weight:700;margin:6px 0 10px}
+.hero .duo{margin:0}.hero .duo svg{width:78px;height:104px}
+.namebox label{font-weight:800;font-size:14px;display:block;margin-bottom:6px}
+.namebox input{width:100%;max-width:340px;background:var(--ink2);border:2px solid var(--line);color:var(--txt);border-radius:12px;padding:12px;font:inherit;font-size:16px}
+.sec{margin-top:22px}.sec>h2{font-size:20px;margin-bottom:10px}
+.chs{display:grid;gap:10px}
+.chc{display:flex;gap:12px;align-items:center;text-align:left;width:100%;background:var(--ink2);border:2px solid var(--line);color:var(--txt);border-radius:18px;padding:12px 14px;min-height:72px;transition:transform .15s}
+.chc:active{transform:scale(.98)}
+.chc .n{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:700 18px 'Space Grotesk';background:var(--ink3);flex:none}
+.chc.ok .n{background:var(--lime);color:var(--ink)}
+.chc.lock{opacity:.5}
+.chc b{display:block;font-size:16px}.chc small{color:var(--muted);font-weight:700}
+.chc .st{margin-left:auto;font-size:15px;white-space:nowrap}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}
+.tslot{background:var(--ink2);border:2px dashed var(--line);border-radius:14px;padding:10px 6px;text-align:center;min-height:96px;font-size:12px;color:var(--muted);font-weight:700;width:100%}
+.tslot .ic{font-size:30px;display:block}
+.tslot.got{border-style:solid;border-color:var(--gold);color:var(--sun);background:linear-gradient(160deg,#3a2c08,#211B3D)}
+/* modal */
+.modal{background:var(--ink2);border:2px solid var(--gold);border-radius:22px;padding:20px;max-width:420px;width:100%;text-align:center;animation:zoom .5s cubic-bezier(.2,.9,.3,1.3) both}
+.modal .ic{font-size:56px;display:block;animation:hop 1.2s infinite}
+.modal h3{color:var(--sun);font-size:22px;margin:6px 0}
+.modal p{margin:8px 0 14px}
+.stars{font-size:34px;letter-spacing:4px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--lime);color:var(--ink);font-weight:800;padding:12px 18px;border-radius:999px;z-index:80;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:fadein .3s ease both;max-width:92vw;text-align:center}
+.conf{position:fixed;top:-20px;width:10px;height:14px;z-index:90;animation:fall linear forwards;border-radius:2px}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+/* cert */
+.cert{background:linear-gradient(160deg,#fffaf0,#fff2cf);color:#16122B;border-radius:22px;padding:26px 20px;text-align:center;border:6px double var(--gold);margin:12px 0}
+.cert h2{font-size:24px}.cert .nm{font-family:'Space Grotesk';font-size:clamp(24px,7vw,36px);color:#7a4a00;margin:12px 0;border-bottom:2px solid var(--gold);display:inline-block;padding:0 10px}
+.cert p{margin:8px 0}
+.cert .seal{font-size:46px}
+@media (max-width:560px){.hero{grid-template-columns:1fr}.hero .duo{display:none}.term .out{height:170px}.dlg .txt{font-size:16px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="https://claude.ai/artifact/Bx5CdGvDFTFQPCDf9bKWsW" target="_blank" rel="noopener">← Site</a>
+    <button class="tog hide" id="bMapa" type="button" aria-label="Voltar ao mapa">🗺️</button>
+    <span class="sp"></span>
+    <button class="tog" id="bVoz" type="button" aria-label="Ligar ou desligar vozes">🎙️</button>
+    <button class="tog" id="bMus" type="button" aria-label="Ligar ou desligar música">🎵</button>
+    <button class="tog gemcount" id="bGem" type="button" aria-label="Tesouros">💎 0/7</button>
+  </div>
+
+  <!-- START -->
+  <section class="screen on" id="start">
+    <div class="logo">Missão <span>Commit</span></div>
+    <div class="tag">Git e GitHub do zero · uma história em 5 capítulos</div>
+    <div class="duo" id="startDuo"></div>
+    <p style="color:var(--muted);font-weight:700;max-width:440px;margin:0 auto 18px">Ligue o som 🔊. Tem música, vozes e alguns sustos pelo caminho.</p>
+    <button class="btn" id="bStart" type="button">▶ Começar</button>
+    <div style="margin-top:12px"><button class="btn ghost small" id="bSkip" type="button">Pular introdução</button></div>
+  </section>
+
+  <!-- HOME -->
+  <section class="screen" id="home">
+    <div class="hero">
+      <div>
+        <h1>Missão <span>Commit</span></h1>
+        <p>Você acompanha o Téo, estagiário no primeiro dia, aprendendo Git com a Rita, analista sênior.</p>
+        <div class="namebox"><label for="nome">Seu nome no certificado</label><input id="nome" maxlength="40" placeholder="Seu nome" autocomplete="off"></div>
+      </div>
+      <div class="duo" id="homeDuo"></div>
+    </div>
+    <div class="sec">
+      <h2>Como você vai aprender</h2>
+      <div class="card"><div class="gcwrap" id="homeGC"></div></div>
+    </div>
+    <div class="sec"><h2>Capítulos</h2><div class="chs" id="chs"></div></div>
+    <div class="sec"><h2>💎 Tesouros escondidos</h2><p style="color:var(--muted);margin:-4px 0 10px;font-size:14px">Toque num espaço vazio para ver uma pista.</p><div class="shelf" id="shelf"></div></div>
+    <div class="sec row" style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn ghost small" id="bIntro" type="button">🎬 Rever a introdução</button>
+      <button class="btn ghost small" id="bCert" type="button">🏅 Certificado</button>
+      <button class="btn ghost small" id="bReset" type="button">Zerar progresso</button>
+    </div>
+  </section>
+
+  <!-- PLAY -->
+  <section class="screen" id="play">
+    <div class="scene" id="scene">
+      <svg class="bg" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--sky1)"/><stop offset="1" stop-color="var(--sky2)"/></linearGradient></defs>
+        <rect width="400" height="220" fill="var(--wall)"/>
+        <rect x="40" y="16" width="210" height="104" rx="8" fill="url(#sky)" stroke="#4a4180" stroke-width="5"/>
+        <circle class="sun" cx="210" cy="44" r="13" fill="#FFD95E"/>
+        <g class="moon"><circle cx="78" cy="40" r="12" fill="#FFF3C4"/><circle cx="84" cy="36" r="11" fill="#0B0E2E"/></g>
+        <g class="stars" fill="#fff"><circle cx="120" cy="30" r="1.4"/><circle cx="160" cy="48" r="1.2"/><circle cx="230" cy="28" r="1.5"/><circle cx="196" cy="62" r="1"/><circle cx="100" cy="66" r="1.1"/></g>
+        <g class="cloud" fill="#fff" opacity=".85"><ellipse cx="70" cy="56" rx="18" ry="7"/><ellipse cx="82" cy="52" rx="12" ry="8"/></g>
+        <g fill="#3b3470"><rect x="48" y="78" width="22" height="42"/><rect x="74" y="64" width="18" height="56"/><rect x="96" y="84" width="28" height="36"/><rect x="128" y="70" width="16" height="50"/><rect x="148" y="90" width="34" height="30"/><rect x="186" y="74" width="20" height="46"/><rect x="210" y="86" width="36" height="34"/></g>
+        <line x1="145" y1="16" x2="145" y2="120" stroke="#4a4180" stroke-width="4"/>
+        <rect x="270" y="26" width="90" height="56" rx="6" fill="#211B3D" stroke="#4a4180" stroke-width="3"/>
+        <text x="315" y="50" text-anchor="middle" font-family="Space Grotesk" font-weight="700" font-size="13" fill="#C6F432">KORA LABS</text>
+        <text x="315" y="68" text-anchor="middle" font-family="Nunito" font-weight="700" font-size="9" fill="#B3ABD6">lançamento: sexta</text>
+        <rect x="0" y="150" width="400" height="70" fill="#3a3168"/>
+        <rect x="0" y="146" width="400" height="8" fill="#5a4fa0"/>
+        <rect x="160" y="96" width="78" height="50" rx="5" fill="#0B0918" stroke="#5a4fa0" stroke-width="3"/>
+        <rect class="screenglow" x="166" y="102" width="66" height="38" rx="2" fill="#2CE5D6" opacity=".35"/>
+        <text x="199" y="125" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C6F432">$ git_</text>
+        <rect x="192" y="146" width="14" height="6" fill="#5a4fa0"/>
+        <g><rect x="248" y="130" width="13" height="16" rx="2" fill="#FF7A59"/><path d="M261 134q6 0 6 5t-6 5" stroke="#FF7A59" stroke-width="2.5" fill="none"/><path d="M252 126q2-4 0-8M257 126q2-4 0-8" stroke="#fff" stroke-width="1.4" fill="none" opacity=".6"/></g>
+        <g><rect x="120" y="128" width="20" height="18" rx="3" fill="#E8B04A"/><path d="M130 128q-14-18-6-30q6 10 6 30q0-22 10-28q4 14-10 28" fill="#3fbf6f"/></g>
+      </svg>
+      <span class="chaptag" id="chapTag"></span>
+      <div class="ringtag hide" id="ringTag"></div>
+      <div id="gems"></div>
+      <div id="dustL"></div>
+      <svg class="char" id="cRita" viewBox="0 0 120 160" aria-label="Rita, analista sênior"></svg>
+      <svg class="char" id="cTeo" viewBox="0 0 120 160" aria-label="Téo, estagiário"></svg>
+    </div>
+    <div class="dlg R" id="dlg">
+      <div class="who"><span class="nm" id="dNm"></span><span class="role" id="dRole"></span></div>
+      <div class="txt" id="dTxt"></div>
+      <div class="row"><button class="btn small hide" id="next" type="button">Próximo ▸</button></div>
+    </div>
+    <div class="stage" id="stage"></div>
+    <div class="tw hide" id="tw">
+      <div class="mission" id="mission"></div>
+      <div class="term">
+        <div class="bar"><i style="background:#FF5470"></i><i style="background:#FFD95E"></i><i style="background:#C6F432"></i>&nbsp; terminal do Téo · kora-site</div>
+        <div class="out" id="out" aria-live="polite"></div>
+        <div class="quick" id="quick"></div>
+        <form id="tform" autocomplete="off"><span class="ps">$</span><input id="cmd" aria-label="Digite um comando" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="digite aqui…"><button type="submit">↵</button></form>
+      </div>
+      <div class="viz" id="viz"></div>
+      <div class="legend">Toque num arquivo para ver o que tem dentro. <span style="color:#ff8fa0">vermelho</span> = mudou e ainda não foi pra caixa · <span style="color:var(--sun)">amarelo</span> = modificado · <span style="color:var(--lime)">verde</span> = pronto para a foto</div>
+    </div>
+  </section>
+
+  <!-- CERT -->
+  <section class="screen" id="certS">
+    <div class="cert" id="certBox"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn" id="bCopy" type="button">Copiar texto do certificado</button>
+      <button class="btn ghost" id="bBackHome" type="button">Voltar aos capítulos</button>
+    </div>
+  </section>
+</div>
+<div id="layer"></div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`(.+?)`/g,'<code>$1</code>');
+const cp = o => JSON.parse(JSON.stringify(o));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ================= PROGRESSO ================= */
+const SK = 'missaoCommit2';
+let P = {done:[], tr:[], nome:'', stars:{}, intro:false, voz:true, mus:true};
+try { const s = localStorage.getItem(SK); if (s) P = Object.assign(P, JSON.parse(s)); } catch(e) {}
+const save = () => { try { localStorage.setItem(SK, JSON.stringify(P)); } catch(e) {} };
+
+/* ================= PERSONAGENS (SVG) ================= */
+const RITA_SVG = `
+<g><path d="M14 160 Q16 112 60 108 Q104 112 106 160Z" fill="#0E7C7B"/><path d="M48 110 L60 138 L72 110Z" fill="#F4E9D8"/><path d="M40 114 L54 160 M80 114 L66 160" stroke="#0a5e5d" stroke-width="3"/>
+<rect x="74" y="128" width="26" height="18" rx="3" fill="#C9C4E6"/><rect x="76" y="130" width="22" height="13" fill="#2CE5D6" opacity=".6"/></g>
+<rect x="52" y="90" width="16" height="22" fill="#9A5F3C"/>
+<g class="hd">
+<path d="M30 54 Q28 22 60 20 Q92 22 90 54 L95 118 Q84 124 76 114 L74 80 L46 80 L44 114 Q36 124 25 118Z" fill="#0F0B0A"/>
+<ellipse cx="60" cy="62" rx="24" ry="28" fill="#A8693F"/>
+<path d="M35 54 Q35 30 60 30 Q85 30 85 54 Q83 46 60 45 Q37 46 35 54Z" fill="#0F0B0A"/>
+<g><line x1="35" y1="70" x2="35" y2="84" stroke="#E8B04A" stroke-width="1.2"/><circle cx="35" cy="74" r="2.4" fill="#D6403A"/><circle cx="35" cy="79" r="2.4" fill="#F2EFFF"/><circle cx="35" cy="84" r="2.6" fill="#E8B04A"/>
+<line x1="85" y1="70" x2="85" y2="84" stroke="#E8B04A" stroke-width="1.2"/><circle cx="85" cy="74" r="2.4" fill="#D6403A"/><circle cx="85" cy="79" r="2.4" fill="#F2EFFF"/><circle cx="85" cy="84" r="2.6" fill="#E8B04A"/></g>
+<path d="M42 51q8-4 15 0M63 51q8-4 15 0" stroke="#0F0B0A" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<g class="eyes"><circle cx="50" cy="60" r="2.8" fill="#120c0a"/><circle cx="70" cy="60" r="2.8" fill="#120c0a"/></g>
+<circle cx="50" cy="60" r="8.5" fill="none" stroke="#E8B04A" stroke-width="2.4"/><circle cx="70" cy="60" r="8.5" fill="none" stroke="#E8B04A" stroke-width="2.4"/><line x1="58.5" y1="60" x2="61.5" y2="60" stroke="#E8B04A" stroke-width="2.4"/>
+<ellipse class="blush" cx="44" cy="72" rx="5" ry="3" fill="#d9776a"/><ellipse class="blush" cx="76" cy="72" rx="5" ry="3" fill="#d9776a"/>
+<path d="M52 77q8 6 16 0" stroke="#4a2414" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<ellipse class="mouth" cx="60" cy="79" rx="5" ry="1.6" fill="#4a2414"/>
+</g>
+<g><circle cx="47" cy="112" r="2.6" fill="#D6403A"/><circle cx="52" cy="116" r="2.6" fill="#F2EFFF"/><circle cx="57" cy="118.5" r="2.6" fill="#E8B04A"/><circle cx="63" cy="118.5" r="2.6" fill="#0F0B0A"/><circle cx="68" cy="116" r="2.6" fill="#D6403A"/><circle cx="73" cy="112" r="2.6" fill="#F2EFFF"/></g>`;
+const TEO_SVG = `
+<g><path d="M14 160 Q16 112 60 108 Q104 112 106 160Z" fill="#FF7A59"/><path d="M38 112 Q60 128 82 112" stroke="#d65a3c" stroke-width="5" fill="none"/>
+<line x1="54" y1="120" x2="52" y2="138" stroke="#fff" stroke-width="2"/><line x1="66" y1="120" x2="68" y2="138" stroke="#fff" stroke-width="2"/>
+<rect x="70" y="132" width="28" height="15" rx="3" fill="#fff"/><text x="84" y="142" text-anchor="middle" font-size="5.5" font-family="Nunito" font-weight="800" fill="#16122B">ESTAGIÁRIO</text></g>
+<rect x="52" y="90" width="16" height="22" fill="#C98B5E"/>
+<g class="hd">
+<ellipse cx="60" cy="62" rx="25" ry="29" fill="#C98B5E"/>
+<ellipse cx="35" cy="64" rx="4" ry="6" fill="#B87A50"/><ellipse cx="85" cy="64" rx="4" ry="6" fill="#B87A50"/>
+<path d="M34 48 Q36 24 60 24 Q84 24 86 48 Q78 36 60 38 Q44 36 34 48Z" fill="#3b2516"/>
+<path d="M33 44 Q36 18 60 18 Q84 18 87 44 Q60 32 33 44Z" fill="#2CE5D6"/><path d="M80 40 Q96 40 100 46 Q90 48 82 46Z" fill="#1fb3a7"/>
+<path d="M44 52q6-3 12 0M64 52q6-3 12 0" stroke="#3b2516" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+<g class="eyes"><circle cx="50" cy="61" r="3.2" fill="#1a0f08"/><circle cx="70" cy="61" r="3.2" fill="#1a0f08"/><circle cx="51" cy="60" r="1" fill="#fff"/><circle cx="71" cy="60" r="1" fill="#fff"/></g>
+<ellipse class="blush" cx="44" cy="72" rx="5" ry="3" fill="#e0866e"/><ellipse class="blush" cx="76" cy="72" rx="5" ry="3" fill="#e0866e"/>
+<path d="M52 77q8 5 16 0" stroke="#5a2a18" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<ellipse class="mouth" cx="60" cy="79" rx="5" ry="1.8" fill="#5a2a18"/>
+<path class="sweat" d="M86 46q4 6 0 9q-4-3 0-9Z" fill="#8FD3FF"/>
+</g>`;
+function duo(el){ el.innerHTML = `<svg class="rita" viewBox="0 0 120 160">${RITA_SVG}</svg><svg class="teo" viewBox="0 0 120 160">${TEO_SVG}</svg>`; }
+$('cRita').innerHTML = RITA_SVG; $('cTeo').innerHTML = TEO_SVG;
+duo($('startDuo')); duo($('homeDuo'));
+for (let i=0;i<8;i++){ const d=document.createElement('span'); d.className='dust'; d.style.left=(Math.random()*100)+'%'; d.style.animationDuration=(6+Math.random()*7)+'s'; d.style.animationDelay=(-Math.random()*8)+'s'; $('dustL').append(d); }
+
+/* ================= CÍRCULO DOURADO ================= */
+function gcSVG(cls){ return `<svg class="gc ${cls||''}" viewBox="0 0 200 200" role="img" aria-label="Círculo Dourado: por quê, como, o quê">
+<circle class="r-what" cx="100" cy="100" r="95"/><circle class="r-how" cx="100" cy="100" r="64"/><circle class="r-why" cx="100" cy="100" r="33"/>
+<text class="t-what" x="100" y="22">O QUÊ</text><text class="t-how" x="100" y="53">COMO</text><text class="t-why" x="100" y="104">POR QUÊ</text></svg>`; }
+const RINGS = {
+  why:{nome:'POR QUÊ', sub:'O propósito: por que isso importa pra você?'},
+  how:{nome:'COMO', sub:'A ideia: como o Git pensa por dentro'},
+  what:{nome:'O QUÊ', sub:'A prática: os comandos de verdade'}
+};
+$('homeGC').innerHTML = gcSVG('why') + `<div class="gclist">
+<div><b>1. Por quê</b> — começa pelo propósito: o problema real que o Git resolve.</div>
+<div><b>2. Como</b> — a ideia por trás, com analogias e animações.</div>
+<div><b>3. O quê</b> — os comandos, digitados num terminal de verdade (simulado).</div>
+<small style="color:var(--muted)">Inspirado no Círculo Dourado de Simon Sinek: de dentro para fora.</small></div>`;
+
+/* ================= ÁUDIO: música e efeitos ================= */
+const AU = {ctx:null, mus:null, sfx:null, mode:'calm', step:0, next:0, timer:null};
+function audioInit(){
+  if (AU.ctx) { if (AU.ctx.state==='suspended') AU.ctx.resume().catch(()=>{}); return; }
+  try {
+    const C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+    AU.ctx = new C(); const m = AU.ctx.createGain(); m.gain.value = .9; m.connect(AU.ctx.destination);
+    AU.mus = AU.ctx.createGain(); AU.mus.gain.value = P.mus ? .16 : 0; AU.mus.connect(m);
+    AU.sfx = AU.ctx.createGain(); AU.sfx.gain.value = .5; AU.sfx.connect(m);
+    AU.next = AU.ctx.currentTime + .1;
+    AU.timer = setInterval(sched, 30);
+  } catch(e) { AU.ctx = null; }
+}
+function tone(f, t, d, type, g, dest, slide){
+  const c = AU.ctx; if (!c) return; const o = c.createOscillator(), v = c.createGain();
+  o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + d);
+  v.gain.setValueAtTime(0.0001, t); v.gain.exponentialRampToValueAtTime(g, t + .02); v.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(v); v.connect(dest || AU.mus); o.start(t); o.stop(t + d + .05);
+}
+const PROG = [[261.6,329.6,392],[220,261.6,329.6],[174.6,220,261.6],[196,246.9,293.7]];
+function sched(){
+  const c = AU.ctx; if (!c) return;
+  const bpm = AU.mode==='suspense' ? 66 : AU.mode==='win' ? 128 : 92, dt = 60/bpm/2;
+  while (AU.next < c.currentTime + .15){
+    const s = AU.step, t = AU.next;
+    if (AU.mode==='suspense'){
+      if (s%16===0){ tone(55,t,4,'sawtooth',.03); tone(58.3,t,4,'sine',.05); }
+      if (s%4===0){ tone(70,t,.18,'sine',.22,null,40); tone(64,t+.22,.16,'sine',.16,null,38); }
+      if (s%8===6) tone([880,932,1046][Math.floor(Math.random()*3)],t,.6,'triangle',.012);
+    } else {
+      const ch = PROG[Math.floor(s/8)%4], up = AU.mode==='win' ? 2 : 1;
+      if (s%8===0) ch.forEach(f => tone(f/2,t,dt*8,'sine',.035));
+      if (s%4===0) tone(ch[0]/4,t,dt*3,'sine',.07);
+      tone(ch[[0,1,2,1][s%4]]*up,t,dt*.9,'triangle',.028);
+      if (s%16===14) tone(ch[2]*2*up,t,dt*1.5,'sine',.02);
+    }
+    AU.step++; AU.next += dt;
+  }
+}
+function setMode(m){ if (m && AU.mode!==m){ AU.mode = m; AU.step = 0; } }
+function duck(on){ if (AU.mus && P.mus) AU.mus.gain.setTargetAtTime(on ? .05 : .16, AU.ctx.currentTime, .15); }
+function sfx(k){
+  if (!AU.ctx) return; const t = AU.ctx.currentTime, d = AU.sfx;
+  if (k==='ok'){ tone(660,t,.12,'triangle',.25,d); tone(990,t+.1,.22,'triangle',.25,d); }
+  if (k==='err'){ tone(150,t,.22,'square',.08,d,110); }
+  if (k==='gem'){ [784,988,1175,1568,1976].forEach((f,i)=>tone(f,t+i*.07,.35,'sine',.22,d)); }
+  if (k==='boom'){ tone(90,t,1.4,'sine',.5,d,30); tone(46,t,1.6,'sawtooth',.08,d,30); }
+  if (k==='ring'){ [523,659,784].forEach((f,i)=>tone(f,t+i*.09,.6,'sine',.16,d)); }
+  if (k==='win'){ [523,659,784,1046,784,1046].forEach((f,i)=>tone(f,t+i*.12,.3,'triangle',.2,d)); }
+  if (k==='key'){ tone(1800,t,.02,'square',.02,d); }
+}
+
+/* ================= VOZES ================= */
+const VZ = {list:[], r:null, t:null, n:null};
+function pickVoices(){
+  if (!('speechSynthesis' in window)) return;
+  VZ.list = speechSynthesis.getVoices();
+  const pt = VZ.list.filter(v => /^pt/i.test(v.lang)).sort((a,b)=> (/BR/i.test(b.lang)) - (/BR/i.test(a.lang)));
+  const fem = /(luciana|francisca|maria|vit[oó]ria|fernanda|thalita|leila|helo|camila|female|feminin)/i;
+  const mas = /(daniel|ant[oô]nio|felipe|fabio|f[aá]bio|julio|j[uú]lio|ricardo|donato|male|masculin)/i;
+  VZ.r = pt.find(v=>fem.test(v.name)) || pt[0] || null;
+  VZ.t = pt.find(v=>mas.test(v.name) && v!==VZ.r) || pt.find(v=>v!==VZ.r) || VZ.r;
+  VZ.n = pt.find(v=>v!==VZ.r && v!==VZ.t) || VZ.r;
+}
+if ('speechSynthesis' in window){ pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
+const SAY = [[/\bGitHub\b/gi,'guít rãb'],[/\.git\b/g,'ponto guít'],[/\bgit\b/gi,'guít'],[/\bcommits?\b/gi,'comít'],[/\bpush\b/gi,'púch'],[/\bpull\b/gi,'púl'],[/\bmerge\b/gi,'mârdj'],[/\bbranch(es)?\b/gi,'brénch'],[/\bmain\b/gi,'mêin'],[/\bstash\b/gi,'stéch'],[/\brestore\b/gi,'ristór'],[/\bdiff\b/gi,'dif'],[/\badd \./gi,'éd ponto'],[/\badd\b/gi,'éd'],[/\bswitch\b/gi,'suítch'],[/ -m\b/g,' traço ême'],[/ -c\b/g,' traço cê'],[/\bSinek\b/g,'Sínek'],[/\bstatus\b/gi,'stêitus'],[/\binit\b/gi,'inít'],[/\borigin\b/gi,'órijin'],[/\bTéo\b/g,'Téu']];
+function speak(text, who, done){
+  const end = () => { duck(false); if (done) done(); };
+  if (!P.voz || !('speechSynthesis' in window)) return setTimeout(end, Math.min(4000, 400 + text.length*35));
+  try {
+    speechSynthesis.cancel();
+    let s = text.replace(/\*\*|`/g,'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}]/gu,'');
+    SAY.forEach(([a,b]) => { s = s.replace(a,b); });
+    const u = new SpeechSynthesisUtterance(s); u.lang = 'pt-BR';
+    const v = who==='R' ? VZ.r : who==='T' ? VZ.t : VZ.n; if (v) u.voice = v;
+    if (who==='R'){ u.pitch = 1.0; u.rate = 1.02; }
+    else if (who==='T'){ u.pitch = (VZ.t===VZ.r) ? 1.55 : 1.25; u.rate = 1.1; }
+    else { u.pitch = .75; u.rate = .93; }
+    let fired = false; const f = () => { if (!fired){ fired = true; end(); } };
+    u.onend = f; u.onerror = f; duck(true);
+    speechSynthesis.speak(u);
+    setTimeout(f, 2500 + s.length*95);
+  } catch(e){ end(); }
+}
+function shush(){ try { speechSynthesis.cancel(); } catch(e){} }
+
+/* ================= SIMULADOR DE GIT ================= */
+function fresh(){ return {init:false, wd:{}, idx:{}, commits:{}, br:{}, head:'main', remote:null, merging:null, n:0, last:'', rej:false, user:'', err:false, found:null}; }
+function hid(g){ g.n++; const h = ((g.n*2654435761 + 0x5bd1e995) >>> 0).toString(16); return (h + 'a3f9c21').slice(0,7); }
+function snap(g, b){ const id = g.br[b || g.head]; return id ? g.commits[id].files : {}; }
+function mkCommit(g, msg, by, p2){ const id = hid(g); g.commits[id] = {id, msg, files:cp(g.idx), parent:g.br[g.head] || null, parent2:p2 || null, by:by || 'Téo'}; g.br[g.head] = id; return id; }
+function seed(g, files, msg, by){ g.wd = cp(files); g.idx = cp(files); return mkCommit(g, msg, by); }
+function eq(a, b){ for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) if (a[k] !== b[k]) return false; return true; }
+function ancestors(g, id){ const s = new Set(), q = [id]; while (q.length){ const x = q.shift(); if (!x || s.has(x)) continue; s.add(x); const c = g.commits[x]; if (c) q.push(c.parent, c.parent2); } return s; }
+function isAnc(g, a, b){ return ancestors(g, b).has(a); }
+function mbase(g, a, b){ const A = ancestors(g, a), q = [b], seen = new Set(); while (q.length){ const x = q.shift(); if (!x || seen.has(x)) continue; seen.add(x); if (A.has(x)) return x; const c = g.commits[x]; if (c) q.push(c.parent, c.parent2); } return null; }
+function dirty(g){ return !eq(g.wd, g.idx) || !eq(g.idx, snap(g)); }
+const MK = /^<<<<<<< /m;
+function doMerge(g, theirs, nm){
+  const ours = g.br[g.head];
+  if (!theirs) return [['m','Nada para juntar.']];
+  if (ours === theirs || isAnc(g, theirs, ours)) return [['g','Já está tudo atualizado (Already up to date).']];
+  if (!ours || isAnc(g, ours, theirs)){ g.br[g.head] = theirs; g.wd = cp(snap(g)); g.idx = cp(snap(g)); return [['g','Avanço rápido (fast-forward): a '+g.head+' agora tem as fotos de '+nm+'.']]; }
+  const bid = mbase(g, ours, theirs), B = bid ? g.commits[bid].files : {}, O = snap(g), T = g.commits[theirs].files, res = {}, conf = [];
+  for (const f of new Set([...Object.keys(B), ...Object.keys(O), ...Object.keys(T)])){
+    const b = B[f], o = O[f], t = T[f];
+    if (o === t){ if (o !== undefined) res[f] = o; }
+    else if (o === b){ if (t !== undefined) res[f] = t; }
+    else if (t === b){ if (o !== undefined) res[f] = o; }
+    else {
+      if (o!==undefined && t!==undefined && b!==undefined){
+        const bl = b.split('\n'), ol = o.split('\n'), tl = t.split('\n');
+        if (bl.length === ol.length && ol.length === tl.length){
+          const out = []; let c = false;
+          for (let i=0;i<bl.length;i++){
+            if (ol[i]===tl[i] || tl[i]===bl[i]) out.push(ol[i]);
+            else if (ol[i]===bl[i]) out.push(tl[i]);
+            else { c = true; out.push('<<<<<<< '+g.head, ol[i], '=======', tl[i], '>>>>>>> '+nm); }
+          }
+          res[f] = out.join('\n'); if (c) conf.push(f); continue;
+        }
+      }
+      res[f] = '<<<<<<< '+g.head+'\n'+(o||'')+'\n=======\n'+(t||'')+'\n>>>>>>> '+nm; conf.push(f);
+    }
+  }
+  g.wd = cp(res);
+  if (conf.length){ const ix = cp(res); conf.forEach(f => { if (O[f]!==undefined) ix[f] = O[f]; else delete ix[f]; }); g.idx = ix; g.merging = {other:theirs, files:conf};
+    return [['r','⚠️ CONFLITO (conflict) em: '+conf.join(', ')],['y','Os dois lados mudaram a mesma linha. O Git não sabe qual fica: quem decide é você.']]; }
+  g.idx = cp(res); const id = mkCommit(g, 'Junta '+nm, g.user || 'Téo', theirs);
+  return [['g','Junção feita (merge) sem conflito. Foto nova: '+id+' "Junta '+nm+'"']];
+}
+const tok = l => (l.match(/"[^"]*"|'[^']*'|\S+/g) || []).map(t => /^(".*"|'.*')$/.test(t) ? t.slice(1,-1) : t);
+function run(g, line){
+  const a = tok(line.trim()), out = [], o = (c,t) => out.push([c,t]);
+  g.err = false; g.found = null;
+  if (!a.length) return out;
+  g.last = a.slice(0,2).join(' ');
+  const k0 = a[0].toLowerCase();
+  if (k0==='help' || k0==='ajuda'){
+    ['Comandos deste simulador:','  git init                 liga o Git na pasta','  git status               mostra o que mudou','  git add arquivo | .      põe na caixa de preparação','  git commit -m "legenda"  tira a foto (salva)','  git log --oneline        mostra o álbum de fotos','  git diff                 mostra o que mudou, linha a linha','  git restore arquivo      desfaz mudanças','  git switch -c nome       cria uma branch e entra nela','  git switch nome          troca de branch','  git merge nome           junta uma branch na atual','  git remote add origin endereço','  git push / git pull      envia / traz da nuvem','  ls · cat arquivo · clear','E alguns segredos… 💎'].forEach((t,i)=>o(i?'o':'y',t));
+    return out;
+  }
+  if (k0==='clear' || k0==='limpar'){ o('clear',''); return out; }
+  if (k0==='ls'){
+    const fs = Object.keys(g.wd).sort();
+    if (/^-l?a/.test(a[1]||'')){ if (g.init){ o('y','.git/   ← a pasta escondida: é o álbum!'); g.found = 'lsa'; } else o('m','(nenhuma pasta escondida: o Git ainda não foi ligado aqui)'); }
+    o('o', fs.length ? fs.join('   ') : '(pasta vazia)'); return out;
+  }
+  if (k0==='cat'){ const f = a[1]; if (f && g.wd[f]!==undefined) g.wd[f].split('\n').forEach(l=>o('o',l)); else { o('r','Arquivo não encontrado: '+(f||'?')); g.err = true; } return out; }
+  if (k0!=='git'){ o('r','Comando desconhecido: '+a[0]+'. Comandos do Git começam com "git". Digite help.'); g.err = true; return out; }
+  const c = (a[1]||'').toLowerCase();
+  if (!c){ o('m','O Git está esperando uma ordem. Exemplo: git status'); return out; }
+  if (c==='init'){ if (g.init) o('y','Já existe um repositório Git aqui.'); else { g.init = true; o('g','✨ Repositório criado! (Initialized empty Git repository in .git/)'); o('m','O álbum existe, mas ainda não tem nenhuma foto.'); } return out; }
+  if (c==='config'){ const i = a.indexOf('user.name'); if (i>0 && a[i+1]){ g.user = a[i+1]; g.found = 'config'; o('g','Nome configurado: '+a[i+1]+'. Ele vai assinar cada commit seu.'); } else o('m','Uso: git config --global user.name "Seu Nome"'); return out; }
+  if (!g.init){ o('r','fatal: esta pasta ainda não é um repositório Git (not a git repository).'); o('y','Dica: comece com git init'); g.err = true; return out; }
+  switch (c){
+  case 'status': {
+    o('o','Você está na branch '+g.head);
+    if (g.merging && g.merging.files.length) o('r','No meio de uma junção (merge) com conflito em: '+g.merging.files.join(', '));
+    const h = snap(g), st = [], md = [], dl = [], un = [];
+    for (const f of new Set([...Object.keys(h), ...Object.keys(g.idx)])) if (g.idx[f] !== h[f]) st.push(f + (g.idx[f]===undefined ? ' (apagado)' : h[f]===undefined ? ' (novo)' : ' (modificado)'));
+    for (const f of Object.keys(g.idx)){ if (g.wd[f]===undefined) dl.push(f); else if (g.wd[f]!==g.idx[f]) md.push(f); }
+    for (const f of Object.keys(g.wd)) if (g.idx[f]===undefined) un.push(f);
+    if (st.length){ o('g','Na caixa, prontos para a foto (Changes to be committed):'); st.forEach(f=>o('g','    '+f)); }
+    if (md.length || dl.length){ o('r','Mudaram, mas estão fora da caixa (Changes not staged):'); md.forEach(f=>o('r','    modificado: '+f)); dl.forEach(f=>o('r','    apagado (deleted): '+f)); o('m','    → git add para pôr na caixa · git restore para desfazer'); }
+    if (un.length){ o('r','Arquivos que o Git ainda não cuida (Untracked files):'); un.forEach(f=>o('r','    '+f)); o('m','    → use git add para o Git começar a cuidar deles'); }
+    if (!st.length && !md.length && !dl.length && !un.length) o('g','Tudo limpo: a pasta está igual à última foto (working tree clean).');
+    if (g.remote && g.remote.refs[g.head] && g.br[g.head]){ const r = g.remote.refs[g.head]; if (r===g.br[g.head]) o('m','Sincronizado com o GitHub (origin/'+g.head+').'); else if (isAnc(g, r, g.br[g.head])) o('y','Você tem fotos que ainda não foram pro GitHub → git push'); }
+    break; }
+  case 'add': {
+    const ps = a.slice(2); if (!ps.length){ o('r','Diga o quê: git add nome-do-arquivo, ou git add . para tudo.'); g.err = true; break; }
+    const all = ps.some(p => p==='.' || p==='-A' || p==='--all');
+    const files = all ? [...new Set([...Object.keys(g.wd), ...Object.keys(g.idx)])] : ps;
+    let n = 0;
+    for (const f of files){
+      if (g.wd[f]!==undefined){ if (g.idx[f]!==g.wd[f]){ g.idx[f] = g.wd[f]; n++; } }
+      else if (g.idx[f]!==undefined){ delete g.idx[f]; n++; }
+      else { o('r','Arquivo não encontrado: '+f+' (pathspec did not match)'); g.err = true; }
+    }
+    let res = false;
+    if (g.merging){ const before = g.merging.files.length; g.merging.files = g.merging.files.filter(f => !(files.includes(f) && !MK.test(g.wd[f]||''))); res = g.merging.files.length < before;
+      files.forEach(f => { if (g.merging.files.includes(f)) o('y','Atenção: '+f+' ainda tem marcas de conflito (<<<<<<<).'); }); }
+    if (n) o('g','📦 '+n+' arquivo(s) na caixa de preparação.');
+    if (res) o('g','Conflito marcado como resolvido ✓');
+    if (!n && !res && !g.err) o('m','Nada novo para pôr na caixa.');
+    break; }
+  case 'commit': {
+    const mi = a.indexOf('-m'), msg = mi>0 ? a[mi+1] : null;
+    if (!msg){ o('r','Falta a legenda da foto! Use: git commit -m "o que você mudou"'); g.err = true; break; }
+    if (g.merging && g.merging.files.length){ o('r','Ainda há conflito sem resolver em '+g.merging.files.join(', ')+'. Resolva e use git add.'); g.err = true; break; }
+    if (Object.values(g.idx).some(v => MK.test(v))){ o('r','Tem marcas de conflito na caixa. Resolva antes.'); g.err = true; break; }
+    if (eq(g.idx, snap(g)) && !g.merging){ o('r','Nada na caixa para fotografar. Use git add antes (nothing to commit).'); g.err = true; break; }
+    const id = mkCommit(g, msg, g.user || 'Téo', g.merging ? g.merging.other : null); g.merging = null;
+    o('g','📸 Foto tirada! ['+g.head+' '+id+'] '+msg);
+    break; }
+  case 'log': {
+    let x = g.br[g.head]; if (!x){ o('m','O álbum ainda está vazio: nenhum commit.'); break; }
+    const one = a.includes('--oneline');
+    while (x){ const cm = g.commits[x], tg = [];
+      if (x===g.br[g.head]) tg.push('HEAD -> '+g.head);
+      Object.keys(g.br).forEach(b => { if (b!==g.head && g.br[b]===x) tg.push(b); });
+      if (g.remote) Object.keys(g.remote.refs).forEach(b => { if (g.remote.refs[b]===x) tg.push('origin/'+b); });
+      o('y', cm.id + (tg.length ? ' ('+tg.join(', ')+')' : '') + ' ' + cm.msg + (one ? '' : '   — por '+cm.by));
+      x = cm.parent; }
+    break; }
+  case 'diff': {
+    let any = false;
+    for (const f of new Set([...Object.keys(g.wd), ...Object.keys(g.idx)])){
+      if (g.wd[f]===g.idx[f]) continue; any = true;
+      const A = (g.idx[f] ?? '').split('\n'), B = (g.wd[f] ?? '').split('\n');
+      o('o','── '+f+(g.wd[f]===undefined ? ' (apagado)' : ''));
+      A.forEach(l => { if (!B.includes(l)) o('r','- '+l); }); B.forEach(l => { if (!A.includes(l)) o('g','+ '+l); });
+    }
+    if (!any) o('m','Nenhuma diferença entre a pasta e a última versão salva.');
+    else o('m','(- vermelho = saiu · + verde = entrou)');
+    break; }
+  case 'checkout': {
+    if (a.includes('--')) return restore(g, a.slice(a.indexOf('--')+1), false, o, out);
+    const nm = a.slice(2).find(x => !x.startsWith('-'));
+    if (a.includes('-b') || (nm && g.br[nm])) return sw(g, a, o, out);
+    return restore(g, a.slice(2), false, o, out); }
+  case 'restore': return restore(g, a.slice(2).filter(x=>!x.startsWith('-')), a.includes('--staged'), o, out);
+  case 'branch': {
+    const nm = a.slice(2).find(x => !x.startsWith('-'));
+    if (nm){ if (!g.br[g.head]){ o('r','Faça pelo menos um commit antes de criar branches.'); g.err = true; break; }
+      if (g.br[nm]) o('r','A branch '+nm+' já existe.'); else { g.br[nm] = g.br[g.head]; o('g','🌿 Branch '+nm+' criada (você continua na '+g.head+').'); } }
+    else Object.keys(g.br).forEach(b => o(b===g.head ? 'g' : 'o', (b===g.head ? '* ' : '  ') + b));
+    break; }
+  case 'switch': return sw(g, a, o, out);
+  case 'merge': {
+    const nm = a[2]; if (!nm || !g.br[nm]){ o('r','A branch '+(nm||'?')+' não existe. Veja com git branch.'); g.err = true; break; }
+    if (g.merging){ o('r','Você já está no meio de uma junção. Termine com git add e git commit.'); g.err = true; break; }
+    if (dirty(g)){ o('r','Você tem mudanças sem foto. Faça commit antes de juntar.'); g.err = true; break; }
+    doMerge(g, g.br[nm], nm).forEach(l => out.push(l)); break; }
+  case 'remote': {
+    if (a[2]==='add'){ if (a[3] && a[4]){ g.remote = {name:a[3], url:a[4], refs:{}}; o('g','🔗 Endereço remoto "'+a[3]+'" ligado a '+a[4]); } else { o('r','Uso: git remote add origin https://github.com/usuario/projeto.git'); g.err = true; } }
+    else if (g.remote) o('o', g.remote.name+'   '+g.remote.url); else o('m','Nenhum endereço remoto ainda.');
+    break; }
+  case 'push': {
+    g.rej = false;
+    if (!g.remote){ o('r','O Git ainda não sabe para onde enviar. Use git remote add origin <endereço>.'); g.err = true; break; }
+    const r = g.remote.refs[g.head], l = g.br[g.head];
+    if (!l){ o('r','Não há fotos para enviar.'); g.err = true; break; }
+    if (r===l){ o('m','Tudo atualizado no GitHub (Everything up-to-date).'); break; }
+    if (!r || isAnc(g, r, l)){ g.remote.refs[g.head] = l; o('m','Enviando fotos para '+g.remote.url+' …'); o('g','☁️ Enviado! '+(r ? r+'..'+l : '[nova branch]')+'   '+g.head+' -> '+g.head); break; }
+    g.rej = true; o('r','! [rejected]   '+g.head+' -> '+g.head+' (fetch first)'); o('r','O GitHub tem fotos que você ainda não tem.'); o('y','Dica: traga as novidades primeiro com git pull.');
+    break; }
+  case 'pull': {
+    if (!g.remote){ o('r','Nenhum endereço remoto configurado.'); g.err = true; break; }
+    const r = g.remote.refs[g.head]; if (!r){ o('m','Ainda não há nada no GitHub para trazer.'); break; }
+    if (dirty(g)){ o('r','Faça commit das suas mudanças antes do pull.'); g.err = true; break; }
+    o('m','Buscando novidades no GitHub…'); doMerge(g, r, 'origin/'+g.head).forEach(l => out.push(l)); break; }
+  case 'stash': g.found = 'stash'; o('y','🗄️ Você achou a gaveta secreta!'); o('m','No Git de verdade, git stash guarda suas mudanças numa gaveta sem fazer commit, e git stash pop devolve. Aqui, deixei tudo como estava.'); break;
+  default: o('r','Este simulador não conhece: git '+a[1]+'. Digite help.'); g.err = true;
+  }
+  return out;
+}
+function restore(g, fs, staged, o, out){
+  if (!fs.length){ o('r','Diga qual arquivo: git restore nome-do-arquivo'); g.err = true; return out; }
+  if (fs.includes('.')) fs = [...new Set([...Object.keys(g.wd), ...Object.keys(g.idx)])].filter(f => g.idx[f]!==undefined);
+  const h = snap(g);
+  for (const f of fs){
+    if (staged){ if (h[f]!==undefined) g.idx[f] = h[f]; else delete g.idx[f]; o('g','Tirado da caixa: '+f); continue; }
+    if (g.idx[f]!==undefined){ const was = g.wd[f]===undefined; g.wd[f] = g.idx[f]; o('g','♻️ '+f+(was ? ' voltou para a pasta!' : ' voltou para a versão salva.')); }
+    else { o('r','O Git não conhece '+f+'. Só dá pra restaurar o que já foi salvo.'); g.err = true; }
+  }
+  return out;
+}
+function sw(g, a, o, out){
+  const create = a.includes('-c') || a.includes('-b'), nm = a.slice(2).find(x => !x.startsWith('-'));
+  if (!nm){ o('r','Diga o nome da branch. Ex.: git switch -c minha-ideia'); g.err = true; return out; }
+  if (create){ if (g.br[nm]){ o('r','A branch '+nm+' já existe.'); g.err = true; } else { if (!g.br[g.head]){ o('r','Faça um commit antes.'); g.err = true; return out; } g.br[nm] = g.br[g.head]; g.head = nm; o('g','🌿 Universo paralelo "'+nm+'" criado. Você está nele agora!'); } return out; }
+  if (!g.br[nm]){ o('r','A branch '+nm+' não existe. Para criar: git switch -c '+nm); g.err = true; return out; }
+  if (nm===g.head){ o('m','Você já está na '+nm+'.'); return out; }
+  if (dirty(g)){ o('r','Você tem mudanças sem foto. Faça commit antes de trocar de branch.'); g.err = true; return out; }
+  g.head = nm; g.wd = cp(snap(g)); g.idx = cp(snap(g)); o('g','✨ Agora você está na '+nm+'. Os arquivos da pasta mudaram para a versão dela.');
+  return out;
+}
+
+/* ================= ARQUIVOS DA HISTÓRIA ================= */
+const H = {
+  v1:'<h1>Kora Labs</h1>\n<p>Aprenda tecnologia jogando.</p>',
+  v2:'<h1>Kora Labs</h1>\n<p>Aprenda tecnologia jogando.</p>\n<button>Comece agora</button>',
+  bad:'<h1>Kora Labz!!!</h1>\n<button>Comece agora</button>',
+  teo:'<h1>Kora Labs - modo noite</h1>\n<p>Aprenda tecnologia jogando.</p>\n<button>Comece agora</button>',
+  rita:'<h1>Kora Labs - aprenda brincando</h1>\n<p>Aprenda tecnologia jogando.</p>\n<button>Comece agora</button>',
+  junto:'<h1>Kora Labs - aprenda brincando (modo noite)</h1>\n<p>Aprenda tecnologia jogando.</p>\n<button>Comece agora</button>',
+  cert:'<h1>Kora Labs - aprenda brincando (modo noite)</h1>\n<p>Aprenda tecnologia jogando.</p>\n<button>Comece agora</button>\n<p>Agora com certificado!</p>',
+  css1:'body { fundo: branco; }', css2:'body { fundo: preto; letra: branca; }',
+  readme:'# Site da Kora Labs\nJogos para aprender tecnologia.'
+};
+const CSSF = 'estilo.css', IDX = 'index.html';
+function hist3(){ const g = fresh(); g.init = true; seed(g, {[IDX]:H.v1,[CSSF]:H.css1}, 'Primeira versão do site', 'Téo'); seed(g, {[IDX]:H.v2,[CSSF]:H.css1}, 'Adiciona botão Comece agora', 'Téo'); return g; }
+function hist5(){ const g = hist3(); g.head = 'tema-escuro'; g.br['tema-escuro'] = g.br.main; seed(g, {[IDX]:H.teo,[CSSF]:H.css2}, 'Cria modo escuro', 'Téo');
+  g.head = 'main'; seed(g, {[IDX]:H.rita,[CSSF]:H.css1}, 'Muda título para aprenda brincando', 'Rita');
+  g.idx = {[IDX]:H.junto,[CSSF]:H.css2}; g.wd = cp(g.idx); mkCommit(g, 'Junta o modo escuro', 'Téo', g.br['tema-escuro']); return g; }
+
+/* ================= TESOUROS ================= */
+const TR = [
+  {id:'cafe', ic:'☕', nm:'Café dourado', fato:'O Git foi criado em 2005 por Linus Torvalds, o mesmo criador do Linux.', pista:'No 1º capítulo, algo brilha perto de uma bebida quente.'},
+  {id:'lsa', ic:'🗝️', nm:'Chave da pasta escondida', fato:'ls -a mostra arquivos escondidos. A pasta .git é o álbum: se ela for apagada, o histórico vai junto!', pista:'No terminal, mostre TUDO da pasta, até o escondido (ls -?).'},
+  {id:'config', ic:'🪪', nm:'Crachá do Git', fato:'git config --global user.name "Seu Nome" faz cada commit levar a sua assinatura. É assim que o time sabe quem fez o quê.', pista:'Ensine ao Git o seu nome (git config …).'},
+  {id:'lua', ic:'🌙', nm:'Lua de plantão', fato:'Regra de sênior: commits pequenos e frequentes. Terminou uma parte que funciona? Commit!', pista:'No apagão, quando a calma voltar, olhe pela janela.'},
+  {id:'stash', ic:'🗄️', nm:'Gaveta secreta', fato:'git stash guarda mudanças numa gaveta sem fazer commit; git stash pop tira de volta.', pista:'Existe uma gaveta no Git… em inglês, stash.'},
+  {id:'galho', ic:'🌿', nm:'Galho de ouro', fato:'Desde 2020, o GitHub usa "main" como nome padrão da branch principal.', pista:'No capítulo dos universos paralelos, uma planta reluz.'},
+  {id:'nuvem', ic:'☁️', nm:'Nuvem de cristal', fato:'Seu perfil no GitHub pode virar portfólio: recrutadores olham projetos de verdade, não só o currículo.', pista:'No dia do lançamento, procure no céu.'}
+];
+const GEMPOS = {cafe:{l:'64%',t:'52%'}, lua:{l:'19%',t:'12%'}, galho:{l:'33%',t:'44%'}, nuvem:{l:'52%',t:'14%'}};
+function gemCount(){ $('bGem').textContent = '💎 '+P.tr.length+'/7'; }
+function findGem(id){
+  if (P.tr.includes(id)) return; const t = TR.find(x => x.id===id); if (!t) return;
+  P.tr.push(id); save(); gemCount(); sfx('gem'); confetti(18);
+  modal(`<span class="ic">${t.ic}</span><h3>Tesouro: ${esc(t.nm)}</h3><p>${fmt(t.fato)}</p><p style="color:var(--muted);font-size:14px">${P.tr.length} de 7 tesouros encontrados</p>`, [['Guardar no baú 💎', null]]);
+}
+function showGem(id){
+  if (P.tr.includes(id)) return; const p = GEMPOS[id]; const b = document.createElement('button');
+  b.className = 'gem'; b.type = 'button'; b.style.left = p.l; b.style.top = p.t; b.setAttribute('aria-label','Algo brilhando'); b.textContent = '✦';
+  b.onclick = () => { b.remove(); findGem(id); }; $('gems').append(b);
+}
+
+/* ================= ROTEIRO ================= */
+const D = (w,s,x) => Object.assign({t:'d',w,s}, x||{});
+const X = (goal,cmd,s,check,why,x) => Object.assign({t:'x',w:'R',goal,cmd,s,check,why}, x||{});
+const Q = (q,opts,a,ok,no,x) => Object.assign({t:'q',w:'R',s:'Pergunta rápida pra conferir o que você aprendeu:',q,opts,a,ok,no}, x||{});
+const C = (id,w,s,x) => Object.assign({t:'c',id,w,s}, x||{});
+const A = (f,w,s,x) => Object.assign({t:'a',f,w,s}, x||{});
+const S = (s,x) => Object.assign({t:'s',s}, x||{});
+const ring = (r, arr) => arr.map(s => Object.assign(s, {r}));
+const cnt = g => Object.keys(g.commits).length;
+
+const CH = [
+{ id:'intro', titulo:'Introdução', steps:[
+  D('N','Segunda-feira, 8h47. Kora Labs, uma pequena startup que cria jogos para aprender tecnologia.',{mus:'calm'}),
+  D('T','Oi! Eu sou o Téo. Hoje é o meu primeiro dia como estagiário!',{enter:'T',mood:'happy'}),
+  D('R','Bem-vindo, Téo! Eu sou a Rita, analista sênior. Vou ser sua mentora por aqui.',{enter:'R'}),
+  D('T','Me pediram pra cuidar do site no GitHub… mas confesso: eu não sei nem o que é Git.',{mood:'worried'}),
+  D('R','Relaxa. Todo mundo começa do zero. Eu vou te ensinar do jeito que eu queria ter aprendido.'),
+  C('gc','R','Sempre em três camadas, como o **Círculo Dourado** do Simon Sinek: primeiro o **porquê**, depois o **como**, e só então **o quê**, que são os comandos.'),
+  D('T','Começar pelo porquê… Gostei. Na faculdade era o contrário: decora o comando e pronto.'),
+  D('N','O que o Téo ainda não sabe: o site novo será lançado na sexta-feira. E nem tudo vai sair como planejado…',{mus:'suspense'}),
+  D('R','Ah, e fica de olho: tem 💎 tesouros escondidos pelo caminho. Uns brilham no cenário. Outros… se escondem no terminal.',{mus:'calm'}),
+  D('T','Bora! Qual é a primeira missão?',{mood:'happy'})
+]},
+{ titulo:'O primeiro dia', sub:'Por que versionar? · git init · git status', setup:() => { const g = fresh(); g.wd = {[IDX]:H.v1,'index_final.html':H.v1,'index_final_AGORA_VAI.html':H.v1,[CSSF]:H.css1}; return g; }, gem:'cafe', steps:[
+  ...ring('why',[
+  D('R','Téo, me mostra a pasta do site.',{gemNow:true}),
+  C('caos','T','Tá aqui! Organizei tudo direitinho: index, index_final e index_final_AGORA_VAI.'),
+  D('R','E qual delas é a certa?'),
+  D('T','Hã… a última? Ou a penúltima? Eu faço uma cópia cada vez que mudo algo, pra não perder.',{mood:'panic'}),
+  D('R','Todo mundo já fez isso. O problema é que ninguém sabe qual é a versão certa, quem mudou o quê, nem quando.'),
+  D('R','**Esse é o porquê do Git:** ter um arquivo só e, mesmo assim, poder voltar a qualquer versão do passado, com data e autor.')]),
+  ...ring('how',[
+  C('album','R','Pense no Git como um **álbum de fotos** do projeto. Cada foto guarda como tudo estava naquele momento.'),
+  D('R','Quando você liga o Git numa pasta, ele cria uma pastinha escondida chamada **.git**. É ali que fica o álbum.'),
+  D('T','Então eu não preciso mais de cópias? O álbum guarda tudo?'),
+  Q('Por que usar Git em vez de salvar cópias como "index_final2"?',['Porque o Git deixa o computador mais rápido','Porque guarda todas as versões num lugar só, com quem mudou e quando','Porque o Git apaga sozinho os arquivos antigos'],1,'Isso! Um arquivo só e o histórico completo.','Não é bem isso. Lembra do álbum de fotos…')]),
+  ...ring('what',[
+  A(g => { delete g.wd['index_final.html']; delete g.wd['index_final_AGORA_VAI.html']; },'T','Pronto, apaguei as cópias. Ficou só o index.html e o estilo. Dá até um frio na barriga…'),
+  X('Ligue o Git nesta pasta','git init','Agora digite **git init**. É como dizer: "Git, a partir de agora você cuida desta pasta".', g => g.init, 'init = iniciar. Cria a pasta escondida .git, que é o álbum.'),
+  D('R','Viu a mensagem? O álbum existe, mas ainda está vazio.'),
+  X('Pergunte ao Git como está a pasta','git status','Agora **git status**. É o comando que você mais vai usar: ele conta o que mudou.', g => g.last==='git status', 'status = situação. Ele nunca muda nada, só informa. Na dúvida, git status!'),
+  D('R','Ele diz que os arquivos estão **fora do Git** (untracked). O Git vê os arquivos, mas ainda não guarda nada. No próximo capítulo a gente tira a primeira foto.'),
+  D('T','Primeiro dia e já conversei com o Git!',{mood:'happy'})])
+]},
+{ titulo:'A primeira foto', sub:'O commit · git add · git commit · git log', setup:() => { const g = fresh(); g.init = true; g.wd = {[IDX]:H.v1,[CSSF]:H.css1}; return g; }, steps:[
+  ...ring('why',[
+  D('T','Rita, ontem eu mexi no site e ficou ótimo. Hoje mexi de novo e… quebrou. Queria voltar pro de ontem.',{mood:'worried'}),
+  D('R','É por isso que a gente tira **fotos** nos momentos bons. Cada foto se chama **commit**. É o seu ponto seguro pra voltar.'),
+  D('R','E toda foto tem uma legenda: uma frase curta dizendo o que mudou. Quem agradece é o você de amanhã.')]),
+  ...ring('how',[
+  C('zonas','R','Tirar a foto tem duas etapas. Primeiro você escolhe quem entra na foto e coloca na **caixa de preparação** (git add). Depois, clique: **commit**.'),
+  D('T','Por que duas etapas? Não dava pra salvar tudo de uma vez?'),
+  D('R','Dá pra escolher! Às vezes você mexeu em 5 arquivos, mas só 2 estão prontos. Só esses vão pra foto.'),
+  Q('O que o git add faz?',['Envia o arquivo para o GitHub','Coloca o arquivo na caixa de preparação para a próxima foto','Apaga o arquivo da pasta'],1,'Exato. O add só prepara, ainda não salva no álbum.','Ainda não. O GitHub fica para o último capítulo. O add é a caixa!'),
+  Q('E o git commit?',['Tira a foto: salva no álbum o que está na caixa','Desfaz a última mudança','Cria uma pasta nova'],0,'Isso! Commit = foto com legenda.','Quase. Lembra: primeiro a caixa, depois o clique da foto.')]),
+  ...ring('what',[
+  X('Coloque todos os arquivos na caixa','git add .','Digite **git add .**. O ponto quer dizer "tudo desta pasta".', g => g.idx[IDX]===g.wd[IDX] && g.idx[CSSF]===g.wd[CSSF], 'add = adicionar à caixa. Você também pode pôr um arquivo só: git add index.html'),
+  D('R','Olha o painel lá embaixo: os arquivos foram pra 📦 caixa.'),
+  X('Tire a primeira foto','git commit -m "Primeira versão do site"','Agora a foto, com a legenda entre aspas depois do **-m**.', g => cnt(g)>=1, 'commit = registrar. O -m vem de "message": a legenda da foto.'),
+  X('Veja o álbum','git log --oneline','Pra ver o álbum: **git log --oneline**.', g => g.last==='git log', 'log = diário. --oneline mostra uma foto por linha.'),
+  D('R','Esse código no começo da linha é a identidade da foto. Cada commit tem o seu, único no mundo.'),
+  A(g => { g.wd[IDX] = H.v2; },'T','Adicionei um botão "Comece agora" no site! Olha o index.html amarelo no painel.'),
+  X('Coloque a mudança na caixa','git add .','Mesmo ritual: primeiro a caixa…', g => g.idx[IDX]===H.v2, 'Sempre: mudar → add → commit.'),
+  X('Tire a segunda foto','git commit -m "Adiciona botão Comece agora"','…depois a foto.', g => cnt(g)>=2, 'Legenda boa diz O QUE mudou, começando com um verbo.'),
+  D('R','Esse é o ciclo do dia a dia: **mudar → add → commit**. Repete isso e você nunca mais perde trabalho.'),
+  D('R','Psiu… dizem que o Git gosta de saber o seu nome. Tem um comando com **config** pra isso. Fica de tesouro pra você.')])
+]},
+{ titulo:'O apagão', sub:'Rede de segurança · git diff · git restore', night:true, setup:hist3, gem:'lua', steps:[
+  ...ring('why',[
+  D('N','Quarta-feira, 18h12. A demonstração para o cliente é amanhã, às 9h.',{mus:'calm'}),
+  D('T','Rita, vou só dar um ajustezinho rápido no título antes de ir embora…'),
+  A(g => { g.wd[IDX] = H.bad; }),
+  S('O título virou "Kora Labz!!!" e um parágrafo sumiu.'),
+  D('T','Eu não sei o que eu apaguei! O cliente vai ver isso amanhã!',{mood:'panic'}),
+  D('R','Respira. **É pra isso que o Git existe**: ser a sua rede de segurança. O que está numa foto não se perde.',{mus:'calm'})]),
+  ...ring('how',[
+  C('rede','R','O Git compara a pasta com a última foto. O **git diff** mostra a diferença. O **git restore** traz de volta a versão da foto.'),
+  Q('Você estragou um arquivo, mas ainda não fez commit do estrago. Como voltar para a última versão salva?',['git restore nome-do-arquivo','git commit -m "volta"','Apagar a pasta e começar de novo'],0,'Isso! restore = restaurar.','Cuidado: fazer commit agora salvaria o estrago no álbum!')]),
+  ...ring('what',[
+  X('Veja exatamente o que mudou','git diff','Primeiro, vamos ver o estrago: **git diff**. Linha com - saiu, linha com + entrou.', g => g.last==='git diff', 'diff = diferença entre a pasta e a última versão salva.'),
+  X('Desfaça o estrago','git restore index.html','Agora traga a versão boa de volta.', g => g.wd[IDX]===g.idx[IDX], 'restore desfaz mudanças que ainda não viraram foto.'),
+  D('T','Voltou!! Rita, você salvou o meu dia.',{mood:'happy'}),
+  D('R','Quem salvou foi o Git. Eu só sei usar.'),
+  D('N','18h47. Cansado, Téo vai arrumar a área de trabalho… e arrasta o arquivo errado pra lixeira.',{mus:'suspense'}),
+  A(g => { delete g.wd[IDX]; }),
+  S('index.html APAGADO. E a lixeira… foi esvaziada.'),
+  D('T','Rita… o index.html sumiu. Esvaziei a lixeira. Será que perdi tudo?',{mood:'panic'}),
+  D('R','Calma. Se ele estava numa foto, o Git tem uma cópia. Primeiro, vamos perguntar o que aconteceu.'),
+  X('Pergunte ao Git o que aconteceu','git status','Na dúvida, sempre: **git status**.', g => g.last==='git status', 'Ele vai mostrar o arquivo como "apagado" (deleted).'),
+  D('R','Viu? "apagado (deleted)". O Git sabe que ele existia e tem a cópia.'),
+  X('Traga o arquivo de volta','git restore index.html','Agora o mesmo restore de antes.', g => g.wd[IDX]!==undefined, 'Funciona porque o arquivo estava na última foto.', {mus:'calm'}),
+  D('T','ELE VOLTOU! Nunca mais vou dormir sem fazer commit.',{mood:'happy',gemNow:true}),
+  D('R','Dica de sênior: dizem que existe uma **gaveta secreta** no Git, pra guardar mudanças sem fazer commit. Procura por **stash**…')])
+]},
+{ titulo:'Universos paralelos', sub:'Branches · git switch · git merge · conflito', setup:hist3, gem:'galho', steps:[
+  ...ring('why',[
+  D('T','Rita, tive uma ideia: um **modo escuro** pro site! Mas e se não ficar bom e atrapalhar o que já funciona?'),
+  D('R','Pergunta de sênior! Esse é o porquê das **branches**: testar ideias sem arriscar a versão principal.')]),
+  ...ring('how',[
+  C('galhos','R','Uma branch é um **universo paralelo**. A linha principal se chama **main**. Você cria outra linha, experimenta à vontade e, se der certo, junta de volta: isso é o **merge**.',{gemNow:true}),
+  D('T','E se a ideia for ruim?'),
+  D('R','Aí é só voltar pra main e esquecer aquele universo. A main nem fica sabendo.'),
+  Q('Pra que serve uma branch?',['Pra fazer backup na nuvem','Pra testar mudanças numa linha paralela, sem mexer na main','Pra apagar commits antigos'],1,'Exato. Liberdade pra errar sem medo.','Não. Pensa em universo paralelo…')]),
+  ...ring('what',[
+  X('Crie o universo "tema-escuro" e entre nele','git switch -c tema-escuro','Digite **git switch -c tema-escuro**. O -c quer dizer "crie".', g => g.head==='tema-escuro', 'switch = trocar de branch. Com -c, cria e já entra.'),
+  A(g => { g.wd[IDX] = H.teo; g.wd[CSSF] = H.css2; },'T','Mudei o fundo pra preto e o título pra "modo noite"! Ficou lindo.',{mood:'happy'}),
+  X('Coloque as mudanças na caixa','git add .','Você já sabe: caixa…', g => g.idx[CSSF]===H.css2 && g.idx[IDX]===H.teo, ''),
+  X('Tire a foto no universo paralelo','git commit -m "Cria modo escuro"','…e foto.', g => g.br['tema-escuro']!==g.br.main && g.commits[g.br['tema-escuro']].files[CSSF]===H.css2, 'Essa foto existe só na branch tema-escuro.'),
+  X('Volte para a linha principal','git switch main','Agora volte pra **main**.', g => g.head==='main', 'Repare no painel: a pasta muda junto com a branch.'),
+  D('R','Olha o painel: na main, o site voltou ao normal. O modo escuro ficou guardado no outro universo.'),
+  D('T','Que demais! Os arquivos mudaram sozinhos!'),
+  A(g => { g.wd[IDX] = H.rita; g.idx[IDX] = H.rita; mkCommit(g, 'Muda título para aprenda brincando', 'Rita'); },'N','Enquanto isso, a Rita muda o título na main e faz um commit…'),
+  D('R','Téo, mudei o título na main pra "aprenda brincando". Pode juntar o seu modo escuro.'),
+  X('Junte o universo paralelo na main','git merge tema-escuro','Digite **git merge tema-escuro**.', g => !!g.merging || isAnc(g, g.br['tema-escuro'], g.br.main), 'merge = juntar. Traz as fotos da outra branch pra cá.'),
+  S('CONFLITO! A Rita e o Téo mudaram a MESMA linha.'),
+  D('T','Eu quebrei o Git?!',{mood:'panic'}),
+  D('R','Não quebrou nada. **Conflito** é o Git sendo educado: ele não sabe qual versão você quer e pergunta. Quem decide é você.',{mus:'calm'}),
+  {t:'k', w:'R', s:'Entre <<<<<<< e ======= está a versão da main (a minha). Depois, até >>>>>>>, a sua. Escolha como fica:'},
+  X('Avise que o conflito foi resolvido','git add index.html','Agora **git add index.html** pra dizer: "resolvi".', g => g.merging && !g.merging.files.length, 'Depois de resolver, o add marca o arquivo como pronto.'),
+  X('Finalize a junção com uma foto','git commit -m "Junta o modo escuro"','E a foto final da junção.', g => !g.merging && g.commits[g.br.main].parent2, 'Esse commit tem dois "pais": a main e a tema-escuro.'),
+  D('R','Pronto: os dois universos viraram um só. Isso é trabalho em equipe de verdade.'),
+  D('T','Conflito resolvido no meu primeiro mês. Vou colocar no currículo!',{mood:'happy'})])
+]},
+{ titulo:'O lançamento', sub:'GitHub · git remote · git push · git pull', setup:hist5, gem:'nuvem', steps:[
+  ...ring('why',[
+  D('N','Sexta-feira, 8h00. O lançamento é às 10h.',{mus:'calm'}),
+  D('T','Rita, o site está só no meu notebook. E se ele cair no chão?',{mood:'worried'}),
+  D('R','Esse é o porquê do **GitHub**: guardar o álbum na nuvem, deixar o time trabalhar junto e mostrar o seu trabalho pro mundo. Vira o seu portfólio!')]),
+  ...ring('how',[
+  C('nuvem','R','O **Git** mora no seu computador. O **GitHub** é um site que guarda uma cópia do álbum. **push** empurra suas fotos pra lá. **pull** puxa as fotos novas que outras pessoas enviaram.',{gemNow:true}),
+  Q('A Rita enviou mudanças para o GitHub. Como você traz essas mudanças para o seu computador?',['git push','git pull','git init'],1,'Isso! pull = puxar.','Não: push é empurrar (enviar). Pra trazer é o contrário.')]),
+  ...ring('what',[
+  X('Conecte a pasta ao repositório no GitHub','git remote add origin https://github.com/kora-labs/site-kora.git','Primeiro, diga ao Git onde fica o álbum na nuvem. **origin** é só um apelido pro endereço.', g => !!g.remote, 'remote = remoto, longe daqui. Você só faz isso uma vez por projeto.'),
+  X('Envie suas fotos para o GitHub','git push -u origin main','Agora empurre: **git push -u origin main**.', g => g.remote && g.remote.refs.main===g.br.main, 'O -u lembra o caminho. Das próximas vezes, só git push.'),
+  D('T','Tá na nuvem! Se meu notebook cair, tá tudo salvo.',{mood:'happy'}),
+  A(g => { const keep = {wd:g.wd, idx:g.idx}; g.idx = Object.assign(cp(snap(g)), {'README.md':H.readme}); const id = hid(g); g.commits[id] = {id, msg:'Adiciona README', files:cp(g.idx), parent:g.remote.refs.main, parent2:null, by:'Rita'}; g.remote.refs.main = id; g.wd = keep.wd; g.idx = keep.idx; },'N','9h30. Do computador dela, a Rita envia uma correção direto pro GitHub…'),
+  A(g => { g.wd[IDX] = H.cert; },'T','Última mudança: um aviso de "Agora com certificado!" no site.'),
+  X('Coloque na caixa','git add .','Ritual de sempre…', g => g.idx[IDX]===H.cert, ''),
+  X('Tire a foto','git commit -m "Adiciona aviso de certificado"','…foto…', g => g.commits[g.br.main].files[IDX]===H.cert, ''),
+  X('Envie para o GitHub','git push','…e envie!', g => g.rej, ''),
+  S('REJEITADO! 9h52. Faltam 8 minutos para o lançamento.'),
+  D('T','Rejeitado?! Agora? Faltando oito minutos?',{mood:'panic'}),
+  D('R','Respira. O GitHub tem uma foto que você não tem: a minha correção. Ele não deixa você passar por cima do trabalho dos outros. Primeiro, **puxe**.',{mus:'calm'}),
+  X('Traga as novidades do GitHub','git pull','**git pull** traz a minha foto e junta com a sua.', g => g.remote && isAnc(g, g.remote.refs.main, g.br.main), 'pull = buscar + juntar (merge).'),
+  X('Agora envie de novo','git push','E agora, sim: **git push**.', g => g.remote && g.remote.refs.main===g.br.main, '', {mus:'win'}),
+  D('N','9h58. O site da Kora Labs está no ar.',{mus:'win'}),
+  D('T','CONSEGUIMOS!!!',{mood:'happy'}),
+  D('R','Você conseguiu, Téo. E agora sabe o porquê, o como e o quê do Git.'),
+  D('R','Pra criar sua conta no GitHub de verdade e publicar o seu portfólio, é preciso ter 13 anos ou mais. Se for o caso, peça ajuda a um adulto.')])
+]}
+];
+
+/* ================= MOTOR DA HISTÓRIA ================= */
+let cur = null, si = 0, G = null, curRing = null, errs = 0, typing = null, stepOk = false, runToken = 0;
+const NAMES = {R:['Rita','Analista sênior'], T:['Téo','Estagiário'], N:['Narrador','']};
+function show(id){ document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id===id)); $('bMapa').classList.toggle('hide', id!=='play'); window.scrollTo({top:0}); }
+function setChars(w, mood){
+  const r = $('cRita'), t = $('cTeo');
+  [r,t].forEach(c => c.classList.remove('talk','panic','happy','dim'));
+  if (w==='R'){ r.classList.add('talk'); t.classList.add('dim'); }
+  else if (w==='T'){ t.classList.add('talk'); r.classList.add('dim'); }
+  else { r.classList.add('dim'); t.classList.add('dim'); }
+  if (mood==='panic') t.classList.add('panic'); if (mood==='happy') (w==='R' ? r : t).classList.add('happy');
+}
+function stopTalk(){ $('cRita').classList.remove('talk'); $('cTeo').classList.remove('talk'); }
+function say(w, s, mood){
+  const d = $('dlg'); d.className = 'dlg ' + w;
+  $('dNm').textContent = NAMES[w][0]; $('dRole').textContent = NAMES[w][1];
+  setChars(w, mood);
+  const html = fmt(s), plain = s.replace(/\*\*|`/g,''); const tx = $('dTxt');
+  clearInterval(typing); let i = 0; tx.textContent = '';
+  typing = setInterval(() => { i += 2; tx.textContent = plain.slice(0, i); if (i >= plain.length){ clearInterval(typing); typing = null; tx.innerHTML = html; } }, 22);
+  tx.onclick = () => { if (typing){ clearInterval(typing); typing = null; tx.innerHTML = html; } };
+  const tk = runToken; speak(s, w, () => { if (tk===runToken) stopTalk(); });
+}
+function nextBtn(on, label){ const b = $('next'); b.classList.toggle('hide', !on); b.textContent = label || 'Próximo ▸'; }
+function startChapter(i){
+  cur = i; si = 0; errs = 0; curRing = null; runToken++;
+  const ch = CH[i]; G = ch.setup ? ch.setup() : fresh();
+  $('scene').classList.toggle('night', !!ch.night);
+  $('chapTag').textContent = i ? 'Capítulo '+i+' · '+ch.titulo : 'Introdução';
+  $('ringTag').classList.add('hide'); $('gems').innerHTML = ''; $('stage').innerHTML = '';
+  $('tw').classList.add('hide'); $('out').innerHTML = '';
+  printT('m','Terminal pronto. Digite help para ver os comandos.');
+  ['cRita','cTeo'].forEach(id => $(id).classList.toggle('off', i===0));
+  setMode('calm'); show('play'); renderViz(); runStep();
+}
+function runStep(){
+  const s = CH[cur].steps[si]; if (!s) return endChapter();
+  if (s.r && s.r !== curRing){ curRing = s.r; return ringOverlay(s.r, () => exec(s)); }
+  exec(s);
+}
+function adv(){ shush(); runToken++; si++; runStep(); }
+function exec(s){
+  stepOk = false; runToken++;
+  if (s.mus) setMode(s.mus);
+  if (s.enter) $(s.enter==='R' ? 'cRita' : 'cTeo').classList.remove('off');
+  if (s.gemNow && CH[cur].gem) showGem(CH[cur].gem);
+  const what = curRing==='what';
+  $('tw').classList.toggle('hide', !what);
+  if (s.t!=='c' && s.t!=='q' && s.t!=='k') $('stage').innerHTML = '';
+  if (s.t==='a'){ s.f(G); renderViz(true); if (!s.s) return adv(); }
+  if (s.t==='s') return suspense(s.s);
+  if (s.s) say(s.w || 'R', s.s, s.mood);
+  if (s.t==='d' || s.t==='a'){ nextBtn(true); if (what) mission(null); }
+  if (s.t==='c'){ concept(s.id); nextBtn(true, 'Entendi ▸'); }
+  if (s.t==='q'){ quiz(s); nextBtn(false); }
+  if (s.t==='x'){ mission(s); nextBtn(false); setTimeout(() => $('tw').scrollIntoView({behavior:'smooth', block:'start'}), 350); }
+  if (s.t==='k'){ conflictUI(); nextBtn(false); }
+}
+$('next').onclick = () => { sfx('key'); adv(); };
+
+function ringOverlay(r, cb){
+  const R = RINGS[r]; sfx('ring');
+  const tag = $('ringTag'); tag.innerHTML = gcSVG(r) + R.nome; tag.classList.remove('hide');
+  const ov = document.createElement('div'); ov.className = 'ov';
+  ov.innerHTML = `<div class="ringov">${gcSVG(r)}<h2>${R.nome}</h2><p>${R.sub}</p><p style="font-size:13px;margin-top:14px">toque para continuar</p></div>`;
+  let gone = false; const close = () => { if (gone) return; gone = true; ov.remove(); cb(); };
+  ov.onclick = close; $('layer').append(ov); speak(R.nome + '. ' + R.sub, 'N'); setTimeout(close, 3600);
+}
+function suspense(text){
+  setMode('suspense'); sfx('boom'); shush();
+  const t = $('cTeo'); t.classList.add('panic');
+  const ov = document.createElement('div'); ov.className = 'ov'; ov.id = 'sus';
+  ov.innerHTML = `<div class="box"><div class="heart">💔</div><div class="big" id="susT"></div><button class="btn hide" id="susB" type="button" style="margin-top:22px;background:#ff8fa0">Continuar…</button></div>`;
+  $('layer').append(ov);
+  let i = 0; const el = $('susT');
+  const iv = setInterval(() => { i++; el.textContent = text.slice(0, i); if (i % 3 === 0) sfx('key'); if (i >= text.length){ clearInterval(iv); $('susB').classList.remove('hide'); } }, 55);
+  speak(text, 'N');
+  $('susB').onclick = () => { ov.remove(); adv(); };
+}
+function concept(id){
+  const st = $('stage'); let h = '';
+  if (id==='gc') h = `<div class="card"><div class="gcwrap">${gcSVG('why')}<div class="gclist"><div><b>Por quê</b>: o propósito. Que problema isso resolve?</div><div><b>Como</b>: a ideia por trás, com analogias.</div><div><b>O quê</b>: os comandos, na prática.</div></div></div></div>`;
+  if (id==='caos') h = `<div class="card"><h3>📂 A pasta do Téo</h3><div class="cx caos"><div class="fileic">index.html</div><div class="fileic">index_final.html</div><div class="fileic">index_final_AGORA_VAI.html</div><span class="qm">❓</span></div><p style="text-align:center;color:var(--muted);font-weight:700">Com Git: um arquivo só, e o histórico guardado.</p><div class="timeline"><div><div class="dot" style="animation-delay:.6s"></div></div><div class="ln"></div><div><div class="dot" style="animation-delay:1.1s"></div></div><div class="ln"></div><div><div class="dot" style="animation-delay:1.6s"></div></div></div><div class="timeline"><div class="lab">seg 9h<br>início</div><div class="lab">ter 14h<br>botão</div><div class="lab">qua 18h<br>cor nova</div></div></div>`;
+  if (id==='album') h = `<div class="card"><h3>📸 O álbum do projeto</h3><div class="polas"><div class="pola" style="--r:-4deg;animation-delay:.1s"><div class="ph" style="background:#dff3ff">🌱</div>Foto 1<br>primeira versão</div><div class="pola" style="--r:3deg;animation-delay:.6s"><div class="ph" style="background:#fff2c8">🔘</div>Foto 2<br>botão novo</div><div class="pola" style="--r:-2deg;animation-delay:1.1s"><div class="ph" style="background:#e9e0ff">🎨</div>Foto 3<br>cor nova</div></div><p style="text-align:center;margin:12px 0 0;color:var(--muted);font-weight:700">Quer voltar no tempo? É só abrir a foto certa. ⏪</p></div>`;
+  if (id==='zonas') h = `<div class="card"><h3>As 3 zonas do Git</h3><div class="zonas"><div class="zona"><span class="ic">📂</span>Mesa<small>sua pasta: onde você trabalha</small></div><div class="arrow">git add</div><div class="zona"><span class="ic">📦</span>Caixa<small>preparação (staging)</small></div><div class="arrow">git commit</div><div class="zona"><span class="ic">📸</span>Álbum<small>histórico de fotos</small></div><span class="mover">index.html</span></div></div>`;
+  if (id==='rede') h = `<div class="card"><h3>🪢 A rede de segurança</h3><div class="rede"><div class="box good"><span class="ic">📸</span>última foto<br><small style="color:var(--lime)">versão boa</small></div><div class="back">git restore</div><div class="box bad"><span class="ic">💥</span>arquivo<br><small style="color:#ff8fa0">estragado</small></div></div><p style="text-align:center;color:var(--muted);font-weight:700;margin:12px 0 0">git diff mostra a diferença · git restore puxa a versão boa de volta</p></div>`;
+  if (id==='galhos') h = `<div class="card galhos"><h3>🌿 Universos paralelos</h3><svg viewBox="0 0 360 130"><line x1="20" y1="90" x2="340" y2="90" stroke="#C6F432" stroke-width="5"/><path class="b2" d="M90 90 C120 90 120 35 160 35 L240 35 C280 35 280 90 300 90" stroke="#FF7A59" stroke-width="5" fill="none"/>
+  <circle cx="40" cy="90" r="8" fill="#C6F432" style="animation-delay:.2s"/><circle cx="90" cy="90" r="8" fill="#C6F432" style="animation-delay:.5s"/><circle cx="180" cy="90" r="8" fill="#C6F432" style="animation-delay:1.3s"/><circle cx="170" cy="35" r="8" fill="#FF7A59" style="animation-delay:1.4s"/><circle cx="225" cy="35" r="8" fill="#FF7A59" style="animation-delay:1.8s"/><circle cx="300" cy="90" r="11" fill="#FFD95E" style="animation-delay:2.6s"/>
+  <text x="20" y="118" fill="#C6F432" font-family="JetBrains Mono" font-size="12">main</text><text x="150" y="20" fill="#FF7A59" font-family="JetBrains Mono" font-size="12">tema-escuro</text><text x="278" y="118" fill="#FFD95E" font-family="JetBrains Mono" font-size="12">merge</text></svg></div>`;
+  if (id==='nuvem') h = `<div class="card"><h3>☁️ Git x GitHub</h3><div class="nuvem"><div><span class="big">💻</span><b>Git</b><br><small style="color:var(--muted)">no seu computador</small></div><div class="lane"><div class="ar up">git push →<span class="pk">📸</span></div><div class="ar dn">← git pull<span class="pk">📸</span></div></div><div><span class="big">☁️</span><b>GitHub</b><br><small style="color:var(--muted)">na nuvem, com o time</small></div></div></div>`;
+  st.innerHTML = h;
+}
+function quiz(s){
+  const st = $('stage');
+  st.innerHTML = `<div class="card quiz"><div class="q">${fmt(s.q)}</div>${s.opts.map((o,i)=>`<button class="op" type="button" data-i="${i}">${fmt(o)}</button>`).join('')}</div>`;
+  st.querySelectorAll('.op').forEach(b => b.onclick = () => {
+    if (stepOk) return; const i = +b.dataset.i;
+    if (i === s.a){ stepOk = true; b.classList.add('ok'); sfx('ok'); say('R', s.ok); nextBtn(true, 'Continuar ▸'); }
+    else { errs++; b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); sfx('err'); say('R', s.no); }
+  });
+}
+function conflictUI(){
+  const f = G.wd[IDX] || '';
+  const lines = f.split('\n'); let mode = 0;
+  const code = lines.map(l => { if (l.startsWith('<<<<<<<')){ mode = 1; return `<span class="mk">${esc(l)}</span>`; } if (l==='======='){ mode = 2; return `<span class="mk">${esc(l)}</span>`; } if (l.startsWith('>>>>>>>')){ mode = 0; return `<span class="mk">${esc(l)}</span>`; } return mode===1 ? `<span class="ours">${esc(l)}</span>` : mode===2 ? `<span class="theirs">${esc(l)}</span>` : esc(l); }).join('\n');
+  const st = $('stage');
+  st.innerHTML = `<div class="card"><h3>⚔️ Conflito em index.html</h3><pre class="code">${code}</pre>
+  <div class="quiz"><button class="op" type="button" data-v="rita"><span style="color:var(--cyan)">Ficar com a versão da main (Rita)</span></button><button class="op" type="button" data-v="teo"><span style="color:var(--coral)">Ficar com a versão do tema-escuro (Téo)</span></button><button class="op" type="button" data-v="junto">✨ Juntar as duas ideias</button></div></div>`;
+  st.querySelectorAll('.op').forEach(b => b.onclick = () => {
+    if (stepOk) return; stepOk = true; b.classList.add('ok'); sfx('ok');
+    G.wd[IDX] = b.dataset.v==='rita' ? H.rita : b.dataset.v==='teo' ? H.teo : H.junto; renderViz(true);
+    st.querySelector('pre').innerHTML = esc(G.wd[IDX]);
+    say(b.dataset.v==='junto' ? 'R' : 'T', b.dataset.v==='junto' ? 'Juntar as duas ideias: decisão de sênior! As marcas de conflito sumiram. Agora é avisar o Git.' : 'Escolhido! As marcas de conflito sumiram do arquivo. Agora falta avisar o Git.');
+    nextBtn(true, 'Continuar ▸');
+  });
+}
+
+/* ================= TERMINAL ================= */
+function printT(c, t){ const out = $('out'); if (c==='clear'){ out.innerHTML = ''; return; } const d = document.createElement('div'); d.className = c; d.textContent = t; out.append(d); out.scrollTop = out.scrollHeight; }
+let curMission = null;
+function mission(s){
+  curMission = s; const m = $('mission'); m.classList.remove('done');
+  if (!s){ m.innerHTML = '<div class="g" style="opacity:.8">Sem missão agora. Explore o terminal à vontade 💎</div>'; return; }
+  m.innerHTML = `<div class="g">${esc(s.goal)}</div><button class="chip" type="button" id="mChip">${esc(s.cmd)}</button>${s.why ? `<div class="why">💡 ${esc(s.why)}</div>` : ''}<div class="tip" id="mTip"></div>`;
+  $('mChip').onclick = () => { $('cmd').value = s.cmd; $('cmd').focus(); };
+}
+function exe(line){
+  printT('c', '$ ' + line);
+  const res = run(G, line);
+  res.forEach(([c,t]) => printT(c, t));
+  renderViz(true);
+  if (G.found) findGem(G.found);
+  const s = CH[cur] && CH[cur].steps[si];
+  if (s && s.t==='x' && !stepOk && curMission===s){
+    if (s.check(G)){ stepOk = true; sfx('ok'); $('mission').classList.add('done'); $('mTip').textContent = ''; toast('Missão cumprida ✓'); nextBtn(true, 'Continuar ▸'); setTimeout(() => $('dlg').scrollIntoView({behavior:'smooth', block:'center'}), 500); }
+    else if (G.err){ errs++; sfx('err'); $('mTip').textContent = 'Quase! Toque no comando verde acima para preencher, ou digite exatamente: ' + s.cmd; }
+  }
+}
+$('tform').onsubmit = e => { e.preventDefault(); const v = $('cmd').value; $('cmd').value = ''; if (v.trim()) exe(v.trim()); };
+['git status','git add .','git log --oneline','git diff','ls','help'].forEach(c => { const b = document.createElement('button'); b.type = 'button'; b.textContent = c; b.onclick = () => { $('cmd').value = c; $('cmd').focus(); }; $('quick').append(b); });
+function renderViz(flash){
+  const g = G; if (!g) return; const h = snap(g);
+  let pasta = Object.keys(g.wd).sort().map(f => { const cls = g.idx[f]===undefined ? 'u' : g.wd[f]!==g.idx[f] ? 'm' : ''; return `<button type="button" class="fchip ${cls}" data-f="${esc(f)}">${esc(f)}</button>`; }).join('');
+  Object.keys(g.idx).filter(f => g.wd[f]===undefined).forEach(f => pasta += `<span class="fchip d">${esc(f)}</span>`);
+  const caixa = [...new Set([...Object.keys(h), ...Object.keys(g.idx)])].filter(f => g.idx[f]!==h[f]).map(f => `<span class="fchip s">${esc(f)}${g.idx[f]===undefined?' ✗':''}</span>`).join('') || '<small style="color:var(--muted)">vazia</small>';
+  let alb = ''; let x = g.br[g.head], n = 0; while (x && n < 4){ const c = g.commits[x]; alb += `<div class="cm"><b>${c.id}</b> ${esc(c.msg)}</div>`; x = c.parent; n++; }
+  if (!g.init) alb = '<small style="color:var(--muted)">o Git ainda não foi ligado</small>'; else if (!alb) alb = '<small style="color:var(--muted)">nenhuma foto ainda</small>';
+  const others = Object.keys(g.br).filter(b => b!==g.head);
+  let html = `<div class="vbox"><h4>📂 Pasta (mesa)</h4>${pasta || '<small style="color:var(--muted)">vazia</small>'}</div><div class="vbox"><h4>📦 Caixa (preparação)</h4>${caixa}</div><div class="vbox"><h4>📸 Álbum · 🌿 ${esc(g.head)}</h4>${alb}${others.length ? `<div class="legend">outras branches: ${others.map(esc).join(', ')}</div>` : ''}</div>`;
+  if (g.remote){ const r = g.remote.refs.main; html += `<div class="vbox"><h4>☁️ GitHub (origin)</h4>${r ? `<div class="cm"><b>${r}</b> ${esc(g.commits[r].msg)}</div>${r===g.br.main ? '<div class="legend" style="color:var(--lime)">✓ igual ao seu</div>' : '<div class="legend" style="color:var(--sun)">diferente do seu</div>'}` : '<small style="color:var(--muted)">nada enviado ainda</small>'}</div>`; }
+  const v = $('viz'); v.innerHTML = html;
+  v.querySelectorAll('button.fchip').forEach(b => b.onclick = () => exe('cat ' + b.dataset.f));
+  if (flash){ v.classList.remove('flash'); void v.offsetWidth; v.classList.add('flash'); }
+}
+
+/* ================= FIM DE CAPÍTULO ================= */
+function endChapter(){
+  shush(); runToken++; stopTalk();
+  if (cur===0){ P.intro = true; save(); sfx('win'); titleCard(); return; }
+  const stars = errs <= 1 ? 3 : errs <= 4 ? 2 : 1;
+  if (!P.done.includes(cur)) P.done.push(cur); P.stars[cur] = Math.max(P.stars[cur]||0, stars); save();
+  sfx('win'); confetti(60);
+  const last = cur === CH.length - 1;
+  modal(`<span class="ic">${last ? '🚀' : '🏆'}</span><h3>Capítulo ${cur} concluído!</h3><div class="stars">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div><p>${esc(CH[cur].titulo)}: ${esc(CH[cur].sub)}</p><p style="color:var(--muted);font-size:14px">💎 ${P.tr.length}/7 tesouros</p>`,
+    last ? [['Ver meu certificado 🏅', () => showCert()]] : [['Próximo capítulo ▸', () => startChapter(cur+1)], ['Capítulos', () => goHome()]]);
+}
+function titleCard(){
+  const ov = document.createElement('div'); ov.className = 'ov';
+  ov.innerHTML = `<div style="text-align:center"><div class="logo">Missão <span>Commit</span></div><p class="tag">Capítulo 1 liberado</p><button class="btn" type="button" id="tcB">Ver capítulos ▸</button></div>`;
+  $('layer').append(ov); confetti(40);
+  $('tcB').onclick = () => { ov.remove(); goHome(); };
+}
+function modal(html, btns){
+  const ov = document.createElement('div'); ov.className = 'ov';
+  ov.innerHTML = `<div class="modal">${html}<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap" class="mb"></div></div>`;
+  const mb = ov.querySelector('.mb');
+  btns.forEach(([l, f], i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn' + (i ? ' ghost' : ''); b.textContent = l; b.onclick = () => { ov.remove(); if (f) f(); }; mb.append(b); });
+  $('layer').append(ov);
+}
+function toast(t){ const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.append(d); setTimeout(() => d.remove(), 2000); }
+function confetti(n){ const cs = ['#C6F432','#FF7A59','#2CE5D6','#A78BFA','#FFD95E','#E8B04A']; for (let i=0;i<n;i++){ const c = document.createElement('div'); c.className = 'conf'; c.style.left = Math.random()*100+'vw'; c.style.background = cs[i%cs.length]; c.style.animationDuration = (1.8+Math.random()*1.8)+'s'; c.style.animationDelay = Math.random()*.5+'s'; document.body.append(c); setTimeout(() => c.remove(), 4200); } }
+
+/* ================= HOME / CERTIFICADO ================= */
+function goHome(){ shush(); runToken++; setMode('calm'); renderHome(); show('home'); }
+function renderHome(){
+  $('nome').value = P.nome || ''; gemCount();
+  $('chs').innerHTML = CH.slice(1).map((c, k) => { const i = k+1, ok = P.done.includes(i), open = i===1 || P.done.includes(i-1) || ok;
+    return `<button type="button" class="chc ${ok?'ok':''} ${open?'':'lock'}" data-i="${i}" ${open?'':'aria-disabled="true"'}><span class="n">${ok?'✓':i}</span><span><b>${esc(c.titulo)}</b><small>${esc(c.sub)}</small></span><span class="st">${ok ? '⭐'.repeat(P.stars[i]||1) : open ? '▶' : '🔒'}</span></button>`; }).join('');
+  $('chs').querySelectorAll('.chc').forEach(b => b.onclick = () => { const i = +b.dataset.i; if (b.classList.contains('lock')){ toast('Termine o capítulo anterior primeiro 🔒'); sfx('err'); return; } audioInit(); startChapter(i); });
+  $('shelf').innerHTML = TR.map(t => P.tr.includes(t.id) ? `<button type="button" class="tslot got" data-id="${t.id}"><span class="ic">${t.ic}</span>${esc(t.nm)}</button>` : `<button type="button" class="tslot" data-id="${t.id}"><span class="ic">❔</span>pista</button>`).join('');
+  $('shelf').querySelectorAll('.tslot').forEach(b => b.onclick = () => { const t = TR.find(x => x.id===b.dataset.id); if (P.tr.includes(t.id)) modal(`<span class="ic">${t.ic}</span><h3>${esc(t.nm)}</h3><p>${fmt(t.fato)}</p>`, [['Fechar', null]]); else modal(`<span class="ic">🔎</span><h3>Pista</h3><p>${esc(t.pista)}</p>`, [['Vou procurar!', null]]); });
+}
+$('nome').oninput = e => { P.nome = e.target.value.trim(); save(); };
+function showCert(){
+  const all = P.done.length >= 5, nome = P.nome || 'Seu nome aqui', tot = Object.values(P.stars).reduce((a,b)=>a+b,0);
+  const data = new Date().toLocaleDateString('pt-BR');
+  $('certBox').innerHTML = all ? `<div class="seal">🏅</div><h2>Certificado de conclusão</h2><p>Certificamos que</p><div class="nm">${esc(nome)}</div><p>concluiu a <b>Missão Commit: Git e GitHub do zero</b>, com os 5 capítulos: o porquê, o como e o quê do controle de versões.</p><p>⭐ ${tot}/15 estrelas · 💎 ${P.tr.length}/7 tesouros</p><p style="font-size:13px">Mentoria: Rita (analista sênior) · ${data}</p>`
+    : `<div class="seal">🔒</div><h2>Certificado bloqueado</h2><p>Conclua os 5 capítulos para liberar. Você já fez ${P.done.length} de 5.</p>`;
+  $('bCopy').classList.toggle('hide', !all);
+  show('certS');
+}
+$('bCopy').onclick = () => { const t = `Certificado: ${P.nome || 'Seu nome'} concluiu a Missão Commit: Git e GitHub do zero (5 capítulos).`; try { navigator.clipboard.writeText(t).then(() => toast('Texto copiado ✓'), () => toast('Não deu para copiar aqui.')); } catch(e){ toast('Não deu para copiar aqui.'); } };
+$('bBackHome').onclick = goHome;
+$('bCert').onclick = showCert;
+$('bIntro').onclick = () => { audioInit(); startChapter(0); };
+let resetArm = false;
+$('bReset').onclick = () => { if (!resetArm){ resetArm = true; $('bReset').textContent = 'Toque de novo para confirmar'; setTimeout(() => { resetArm = false; $('bReset').textContent = 'Zerar progresso'; }, 3000); return; } P.done = []; P.tr = []; P.stars = {}; save(); resetArm = false; $('bReset').textContent = 'Zerar progresso'; renderHome(); toast('Progresso zerado'); };
+$('bMapa').onclick = goHome;
+$('bGem').onclick = () => { goHome(); setTimeout(() => $('shelf').scrollIntoView({behavior:'smooth'}), 200); };
+function syncTogs(){ $('bVoz').classList.toggle('off', !P.voz); $('bMus').classList.toggle('off', !P.mus); }
+$('bVoz').onclick = () => { P.voz = !P.voz; save(); syncTogs(); if (!P.voz) shush(); toast(P.voz ? 'Vozes ligadas 🎙️' : 'Vozes desligadas'); };
+$('bMus').onclick = () => { audioInit(); P.mus = !P.mus; save(); syncTogs(); if (AU.mus) AU.mus.gain.setTargetAtTime(P.mus ? .16 : 0, AU.ctx.currentTime, .1); };
+$('bStart').onclick = () => { audioInit(); if (P.intro) goHome(); else startChapter(0); };
+$('bSkip').onclick = () => { audioInit(); P.intro = true; save(); goHome(); };
+syncTogs(); gemCount();
+</script>
+</body>
+</html>
