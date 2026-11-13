@@ -257,7 +257,7 @@ pre.code .mk{color:var(--red);font-weight:700}pre.code .ours{color:var(--cyan)}p
   <!-- START -->
   <section class="screen on" id="start">
     <div class="logo">Missão <span>Commit</span></div>
-    <div class="tag">Git e GitHub do zero · uma história em 5 capítulos</div>
+    <div class="tag">Git e GitHub do zero · uma história em 6 capítulos</div>
     <div class="duo" id="startDuo"></div>
     <p style="color:var(--muted);font-weight:700;max-width:440px;margin:0 auto 18px">Ligue o som 🔊. Tem música, vozes e alguns sustos pelo caminho.</p>
     <button class="btn" id="bStart" type="button">▶ Começar</button>
@@ -358,7 +358,7 @@ const cp = o => JSON.parse(JSON.stringify(o));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 /* ================= PROGRESSO ================= */
-const SK = 'missaoCommit2';
+const SK = 'mg_missao_commit_v1';
 let P = {done:[], tr:[], nome:'', stars:{}, intro:false, voz:true, mus:true};
 try { const s = localStorage.getItem(SK); if (s) P = Object.assign(P, JSON.parse(s)); } catch(e) {}
 const save = () => { try { localStorage.setItem(SK, JSON.stringify(P)); } catch(e) {} };
@@ -417,7 +417,7 @@ $('homeGC').innerHTML = gcSVG('why') + `<div class="gclist">
 <div><b>1. Por quê</b> — começa pelo propósito: o problema real que o Git resolve.</div>
 <div><b>2. Como</b> — a ideia por trás, com analogias e animações.</div>
 <div><b>3. O quê</b> — os comandos, digitados num terminal de verdade (simulado).</div>
-<small style="color:var(--muted)">Inspirado no Círculo Dourado de Simon Sinek: de dentro para fora.</small></div>`;
+<small style="color:var(--muted)">Do propósito para fora: primeiro o porquê, depois o como e o quê.</small></div>`;
 
 /* ================= ÁUDIO: música e efeitos ================= */
 const AU = {ctx:null, mus:null, sfx:null, mode:'calm', step:0, next:0, timer:null};
@@ -461,6 +461,7 @@ function sched(){
 function setMode(m){ if (m && AU.mode!==m){ AU.mode = m; AU.step = 0; } }
 function duck(on){ if (AU.mus && P.mus) AU.mus.gain.setTargetAtTime(on ? .05 : .16, AU.ctx.currentTime, .15); }
 function sfx(k){
+  try { if (navigator.vibrate && (k==='err' || k==='win')) navigator.vibrate(k==='win' ? [60,40,60] : 60); } catch(e){}
   if (!AU.ctx) return; const t = AU.ctx.currentTime, d = AU.sfx;
   if (k==='ok'){ tone(660,t,.12,'triangle',.25,d); tone(990,t+.1,.22,'triangle',.25,d); }
   if (k==='err'){ tone(150,t,.22,'square',.08,d,110); }
@@ -485,8 +486,25 @@ function pickVoices(){
 }
 if ('speechSynthesis' in window){ pickVoices(); speechSynthesis.onvoiceschanged = pickVoices; }
 const SAY = [[/\bGitHub\b/gi,'guít rãb'],[/\.git\b/g,'ponto guít'],[/\bgit\b/gi,'guít'],[/\bcommits?\b/gi,'comít'],[/\bpush\b/gi,'púch'],[/\bpull\b/gi,'púl'],[/\bmerge\b/gi,'mârdj'],[/\bbranch(es)?\b/gi,'brénch'],[/\bmain\b/gi,'mêin'],[/\bstash\b/gi,'stéch'],[/\brestore\b/gi,'ristór'],[/\bdiff\b/gi,'dif'],[/\badd \./gi,'éd ponto'],[/\badd\b/gi,'éd'],[/\bswitch\b/gi,'suítch'],[/ -m\b/g,' traço ême'],[/ -c\b/g,' traço cê'],[/\bSinek\b/g,'Sínek'],[/\bstatus\b/gi,'stêitus'],[/\binit\b/gi,'inít'],[/\borigin\b/gi,'órijin'],[/\bTéo\b/g,'Téu']];
-function speak(text, who, done){
+const CHKEY = ['intro','cap1','cap2','cap3','cap4','cap5','cap6'];
+const AUDIO_KEYS = ["anel_como", "anel_oque", "anel_porque", "cap1_00", "cap1_01", "cap1_02", "cap1_03", "cap1_04", "cap1_05", "cap1_06", "cap1_07", "cap1_08", "cap1_09_certo", "cap1_09_errado", "cap1_10", "cap1_11", "cap1_12", "cap1_13", "cap1_14", "cap1_15", "cap2_00", "cap2_01", "cap2_02", "cap2_03", "cap2_04", "cap2_05", "cap2_06_certo", "cap2_06_errado", "cap2_07_certo", "cap2_07_errado", "cap2_13", "cap3_00", "cap3_01", "cap3_03", "cap3_04", "cap3_10", "cap3_12", "cap3_14", "cap3_15", "cap3_20", "cap4_00", "cap4_13", "cap4_16", "cap5_00", "cap5_08", "cap5_09", "cap5_13", "cap5_18", "intro_00", "intro_01", "intro_02", "intro_03", "intro_04", "intro_05", "intro_06", "intro_07", "intro_08", "intro_09"];
+const stepKey = i => CHKEY[cur] + '_' + String(i).padStart(2,'0');
+let clip = null;
+function playClip(key, end, fallback){
+  let fin = false;
+  const bail = () => { if (fin) return; fin = true; duck(false); fallback(); };
+  try { if (clip) clip.pause(); clip = new Audio('audio/' + key + '.wav'); } catch(e){ return bail(); }
+  duck(true);
+  clip.onended = () => { if (fin) return; fin = true; duck(false); end(); };
+  clip.onerror = bail;
+  const pr = clip.play(); if (pr && pr.catch) pr.catch(bail);
+}
+function speak(text, who, done, key){
   const end = () => { duck(false); if (done) done(); };
+  if (P.voz && key && AUDIO_KEYS.includes(key)) return playClip(key, end, () => speakTTS(text, who, end));
+  return speakTTS(text, who, end);
+}
+function speakTTS(text, who, end){
   if (!P.voz || !('speechSynthesis' in window)) return setTimeout(end, Math.min(4000, 400 + text.length*35));
   try {
     speechSynthesis.cancel();
@@ -503,7 +521,7 @@ function speak(text, who, done){
     setTimeout(f, 2500 + s.length*95);
   } catch(e){ end(); }
 }
-function shush(){ try { speechSynthesis.cancel(); } catch(e){} }
+function shush(){ try { speechSynthesis.cancel(); } catch(e){} if (clip){ try { clip.pause(); } catch(e){} clip = null; } }
 
 /* ================= SIMULADOR DE GIT ================= */
 function fresh(){ return {init:false, wd:{}, idx:{}, commits:{}, br:{}, head:'main', remote:null, merging:null, n:0, last:'', rej:false, user:'', err:false, found:null}; }
@@ -749,14 +767,40 @@ const S = (s,x) => Object.assign({t:'s',s}, x||{});
 const ring = (r, arr) => arr.map(s => Object.assign(s, {r}));
 const cnt = g => Object.keys(g.commits).length;
 
+
+/* ===== CAPÍTULO 6: PORTFÓLIO ===== */
+function resetRepo(g){ const f = fresh(); Object.keys(g).forEach(k => delete g[k]); Object.assign(g, f); g.init = true; }
+const PROJ = [
+ {nome:'Página pessoal de apresentação', pasta:'pagina-pessoal', msg:'Adiciona página pessoal',
+  brief:'Uma página com a sua foto, uma bio curta e links. Ela é o seu cartão de visita digital.',
+  arquivos:{'index.html':'<h1>Oi, eu sou a Téo</h1>\n<p>Estagiária em tecnologia, aprendendo Git e GitHub.</p>','README.md':'# Página pessoal\nMinha apresentação em uma página só.\n\n## Como abrir\nAbra o arquivo index.html no navegador.'}},
+ {nome:'Site de uma loja de bairro', pasta:'loja-de-bairro', msg:'Adiciona site da loja de bairro',
+  brief:'Um site simples para uma loja real ou fictícia: o que ela vende, horário e contato.',
+  arquivos:{'index.html':'<h1>Padaria do Bairro</h1>\n<p>Pães quentinhos todas as manhãs.</p>','README.md':'# Loja de bairro\nSite de apresentação de uma padaria.\n\n## Como abrir\nAbra o arquivo index.html no navegador.'}},
+ {nome:'Painel de dados de Brasília', pasta:'painel-brasilia', msg:'Adiciona painel de dados de Brasília',
+  brief:'Uma tabela com dados abertos da cidade e um gráfico simples. Use dados oficiais do GDF ou do IBGE.',
+  arquivos:{'dados.csv':'regiao,valor\nExemplo,1','README.md':'# Painel de dados de Brasília\nTabela com dados abertos. Fonte: troque pelo site oficial de onde os dados vieram.\n\n## Como usar\nAbra o arquivo dados.csv em uma planilha.'}}
+];
+function projSteps(p, i){
+  return [
+    D('R', 'Projeto ' + (i+1) + ': ' + p.nome + '. ' + p.brief),
+    A(g => { resetRepo(g); }, 'T', 'Abri um repositório novo só para este projeto.'),
+    A(g => { Object.assign(g.wd, p.arquivos); }, 'T', 'Criei os arquivos. Agora vamos enviá-los.'),
+    X('Ponha os arquivos na caixa', 'git add .', 'Você já conhece: git add ponto.', g => Object.keys(p.arquivos).every(f => g.idx[f] === p.arquivos[f]), 'add = pôr na caixa de preparação.'),
+    X('Tire a foto do projeto', 'git commit -m "' + p.msg + '"', 'Foto com legenda, como no capítulo 2.', g => { const h = g.br[g.head]; return !!h && g.commits[h].msg === p.msg; }, 'A legenda diz o que você fez neste projeto.'),
+    X('Ligue o repositório ao GitHub', 'git remote add origin https://github.com/seu-usuario/' + p.pasta + '.git', 'Troque "seu-usuario" pelo seu usuário do GitHub.', g => !!g.remote, 'Esse endereço é a casa do projeto na nuvem.'),
+    X('Envie o projeto para o GitHub', 'git push -u origin main', 'Agora o projeto fica na nuvem para qualquer recrutador ver.', g => !!g.remote && g.remote.refs.main === g.br.main, 'push = enviar. Na próxima vez, basta git push.')
+  ];
+}
+
 const CH = [
 { id:'intro', titulo:'Introdução', steps:[
-  D('N','Segunda-feira, 8h47. Kora Labs, uma pequena startup que cria jogos para aprender tecnologia.',{mus:'calm'}),
+  D('N','Segunda-feira, 8h47. Kora Labs, uma pequena startup de Brasília que cria jogos para aprender tecnologia.',{mus:'calm'}),
   D('T','Oi! Eu sou o Téo. Hoje é o meu primeiro dia como estagiário!',{enter:'T',mood:'happy'}),
   D('R','Bem-vindo, Téo! Eu sou a Rita, analista sênior. Vou ser sua mentora por aqui.',{enter:'R'}),
   D('T','Me pediram pra cuidar do site no GitHub… mas confesso: eu não sei nem o que é Git.',{mood:'worried'}),
   D('R','Relaxa. Todo mundo começa do zero. Eu vou te ensinar do jeito que eu queria ter aprendido.'),
-  C('gc','R','Sempre em três camadas, como o **Círculo Dourado** do Simon Sinek: primeiro o **porquê**, depois o **como**, e só então **o quê**, que são os comandos.'),
+  C('gc','R','Sempre em três camadas: primeiro o **porquê**, depois o **como**, e só então **o quê**, que são os comandos.'),
   D('T','Começar pelo porquê… Gostei. Na faculdade era o contrário: decora o comando e pronto.'),
   D('N','O que o Téo ainda não sabe: o site novo será lançado na sexta-feira. E nem tudo vai sair como planejado…',{mus:'suspense'}),
   D('R','Ah, e fica de olho: tem 💎 tesouros escondidos pelo caminho. Uns brilham no cenário. Outros… se escondem no terminal.',{mus:'calm'}),
@@ -888,8 +932,87 @@ const CH = [
   D('T','CONSEGUIMOS!!!',{mood:'happy'}),
   D('R','Você conseguiu, Téo. E agora sabe o porquê, o como e o quê do Git.'),
   D('R','Pra criar sua conta no GitHub de verdade e publicar o seu portfólio, é preciso ter 13 anos ou mais. Se for o caso, peça ajuda a um adulto.')])
+]},
+{ titulo:'Seu portfólio', sub:'3 projetos · repositório · README · push', setup:()=>{ const g = fresh(); g.init = true; return g; }, steps:[
+  ...ring('why',[
+  D('R','Téo, recrutador olha projeto de verdade, não só o currículo. Um repositório no GitHub mostra o que você sabe fazer.'),
+  D('T','Mas eu ainda não tenho nenhum projeto…',{mood:'worried'}),
+  D('R','Por isso vamos fazer três, um de cada vez. Cada um vira o seu portfólio.')]),
+  ...ring('how',[
+  D('R','Cada projeto é um repositório. Dentro dele ficam os arquivos, um README que explica o projeto e as fotos (commits) da sua evolução.'),
+  Q('O que é um repositório?',['Uma pasta do Git que guarda o projeto e o histórico','Um tipo de arquivo de imagem','Um comando para apagar fotos'],0,'Isso! Pasta com histórico.','Pensa no álbum de fotos do projeto.')]),
+  ...ring('what',[
+  ...projSteps(PROJ[0], 0),
+  ...projSteps(PROJ[1], 1),
+  ...projSteps(PROJ[2], 2),
+  D('N','Três projetos no ar. Cada um com README e instruções, pronto para mostrar em processo seletivo.'),
+  D('T','Olha isso! Eu tenho um portfólio de verdade.',{mood:'happy'}),
+  D('R','Agora você sabe o porquê, o como e o quê do Git. E sabe mostrar o que faz.')])
 ]}
 ];
+
+/* ===== PROVA RÁPIDA E ENTREVISTA ===== */
+const PROVA = {
+ 1:[{q:'Para que serve o Git?', opts:[{t:'Guardar o histórico de versões do projeto', f:'Isso! Ele guarda o histórico com data e autor.', b:true},{t:'Apagar versões antigas sozinho', f:'Não: o Git guarda as versões, não apaga.', b:false},{t:'Criar sites automaticamente', f:'Não é essa a função. Ele cuida do histórico.', b:false}]},
+    {q:'Qual comando liga o Git numa pasta?', opts:[{t:'git init', f:'Isso! init = iniciar o Git na pasta.', b:true},{t:'git start', f:'Esse comando não existe. Use git init.', b:false},{t:'git open', f:'Esse comando não existe. Use git init.', b:false}]}],
+ 2:[{q:'O que o git add faz?', opts:[{t:'Põe o arquivo na caixa de preparação', f:'Isso! Ainda não é foto: é a caixa.', b:true},{t:'Envia o arquivo para o GitHub', f:'Não: isso é o push, no último capítulo.', b:false},{t:'Apaga o arquivo', f:'Não apaga nada. Só prepara.', b:false}]},
+    {q:'Qual é a ordem certa para tirar uma foto?', opts:[{t:'add, depois commit', f:'Isso! Primeiro a caixa, depois a foto.', b:true},{t:'commit, depois add', f:'Quase: primeiro o add, para a caixa ficar pronta.', b:false},{t:'push, depois commit', f:'Não: o push vem por último, para enviar.', b:false}]}],
+ 3:[{q:'Como ver o que mudou na pasta, linha por linha?', opts:[{t:'git diff', f:'Isso! Linha com menos saiu, com mais entrou.', b:true},{t:'git push', f:'Não: o push envia para o GitHub.', b:false},{t:'git init', f:'Não: o init só liga o Git.', b:false}]},
+    {q:'Como trazer de volta um arquivo estragado?', opts:[{t:'git restore nome-do-arquivo', f:'Isso! Ele volta para a versão da última foto.', b:true},{t:'git commit -m "volta"', f:'Cuidado: o commit salvaria o estrago.', b:false},{t:'git remote', f:'Não: o remote liga o GitHub.', b:false}]}],
+ 4:[{q:'Para que serve uma branch?', opts:[{t:'Testar uma ideia sem mexer na versão principal', f:'Isso! É um universo paralelo.', b:true},{t:'Apagar o histórico', f:'Não: a branch cria uma linha nova.', b:false},{t:'Enviar para o GitHub', f:'Não: isso é o push.', b:false}]},
+    {q:'O que é um conflito no merge?', opts:[{t:'Duas mudanças na mesma linha, e você decide qual fica', f:'Isso! O Git pergunta, e quem decide é você.', b:true},{t:'Um erro que apaga o projeto', f:'Não apaga nada. Só pede a sua decisão.', b:false},{t:'Um comando que cancela o merge', f:'Não é um comando. É uma pergunta do Git.', b:false}]}],
+ 5:[{q:'Qual comando envia suas fotos para o GitHub?', opts:[{t:'git push', f:'Isso! push = enviar.', b:true},{t:'git pull', f:'Pull traz do GitHub. Para enviar, use push.', b:false},{t:'git init', f:'Não: o init só liga o Git.', b:false}]},
+    {q:'O que é o origin?', opts:[{t:'O apelido do endereço do GitHub', f:'Isso! É só um apelido para o endereço.', b:true},{t:'Uma branch antiga', f:'Não é uma branch. É o apelido do endereço.', b:false},{t:'Um arquivo de configuração', f:'Não é um arquivo. É o apelido do endereço.', b:false}]}],
+ 6:[{q:'O que um recrutador quer ver em um portfólio?', opts:[{t:'Projetos reais com README e histórico', f:'Isso! Projeto de verdade mostra o que você faz.', b:true},{t:'Só a lista de cursos', f:'Curso ajuda, mas projeto mostra o trabalho.', b:false},{t:'Uma foto bonita do perfil', f:'A foto não mostra o que você sabe fazer.', b:false}]},
+    {q:'Para que serve o README?', opts:[{t:'Explicar o projeto e como usar', f:'Isso! É a porta de entrada do projeto.', b:true},{t:'Guardar senhas', f:'Nunca guarde senhas no README.', b:false},{t:'Substituir o histórico de commits', f:'Não substitui nada. Complementa o projeto.', b:false}]}]
+};
+const ENTREVISTA = {q:'Téo, conte um projeto que você fez usando Git.', opts:[
+  {t:'Fiz um site de loja com README, histórico de commits e publiquei no GitHub.', f:'Ótimo! Você contou o que fez, como fez e onde está. Essa é a resposta que um recrutador quer ouvir.', b:true},
+  {t:'Eu não usei Git, mas aprendo rápido.', f:'Honestidade vale, mas no processo seletivo mostre um projeto, mesmo simples.', b:false},
+  {t:'Fiz tudo sozinho e nunca trabalhei em equipe.', f:'Trabalho individual conta. Mostre também como organizou o histórico.', b:false}]};
+
+function mc(q, done){
+  const st = $('stage');
+  st.innerHTML = `<div class="card quiz"><div class="q">${fmt(q.q)}</div>${q.opts.map((o,i)=>`<button class="op" type="button" data-i="${i}">${fmt(o.t)}</button>`).join('')}</div>`;
+  nextBtn(false); say('R', q.q);
+  let answered = false;
+  st.querySelectorAll('.op').forEach(b => b.onclick = () => {
+    if (answered) return; answered = true;
+    const o = q.opts[+b.dataset.i];
+    b.classList.add(o.b ? 'ok' : 'no'); sfx(o.b ? 'ok' : 'err');
+    if (o.b) st.querySelectorAll('.op')[q.opts.indexOf(q.opts.find(x => x.b))].classList.add('ok');
+    say('R', o.f); nextBtn(true, 'Continuar ▸');
+    pendingNext = () => { pendingNext = null; done(o.b); };
+  });
+}
+function provaRun(i){
+  const qs = PROVA[i] || []; let k = 0, acc = 0;
+  const fim = () => {
+    if (acc === qs.length){
+      modal(`<span class="ic">🎓</span><h3>Você já domina este capítulo!</h3><p>Acertou ${acc} de ${qs.length}. Quer pular direto para o próximo?</p>`,
+        [['Pular capítulo ▸', () => skipChap(i)], ['Fazer o capítulo', () => adv()]]);
+    } else {
+      $('stage').innerHTML = '';
+      say('R', 'Sem problema. Vamos juntos neste capítulo, do começo.');
+      nextBtn(true, 'Começar ▸'); pendingNext = () => { pendingNext = null; adv(); };
+    }
+  };
+  const ask = () => { if (k >= qs.length) return fim(); mc(qs[k], b => { acc += b ? 1 : 0; k++; ask(); }); };
+  ask();
+}
+function skipChap(i){
+  if (!P.done.includes(i)) P.done.push(i); P.stars[i] = 3; save();
+  shush(); runToken++;
+  if (i + 1 < CH.length) startChapter(i + 1); else goHome();
+}
+function entrevista(){
+  mc(ENTREVISTA, b => {
+    say('R', b ? 'Resumo: quem entrevista quer três coisas: o que você fez, como fez e onde está. Você já tem isso.' : 'Resumo: na próxima vez, conte um projeto real, com o que fez, como fez e onde está.');
+    nextBtn(true, 'Encerrar ▸'); pendingNext = adv;
+  });
+}
+CH.forEach((c, i) => { if (i > 0) c.steps.unshift({t:'p', ch:i}); });
+CH[CH.length - 1].steps.push({t:'e'});
 
 /* ================= MOTOR DA HISTÓRIA ================= */
 let cur = null, si = 0, G = null, curRing = null, errs = 0, typing = null, stepOk = false, runToken = 0;
@@ -904,7 +1027,7 @@ function setChars(w, mood){
   if (mood==='panic') t.classList.add('panic'); if (mood==='happy') (w==='R' ? r : t).classList.add('happy');
 }
 function stopTalk(){ $('cRita').classList.remove('talk'); $('cTeo').classList.remove('talk'); }
-function say(w, s, mood){
+function say(w, s, mood, key){
   const d = $('dlg'); d.className = 'dlg ' + w;
   $('dNm').textContent = NAMES[w][0]; $('dRole').textContent = NAMES[w][1];
   setChars(w, mood);
@@ -912,7 +1035,7 @@ function say(w, s, mood){
   clearInterval(typing); let i = 0; tx.textContent = '';
   typing = setInterval(() => { i += 2; tx.textContent = plain.slice(0, i); if (i >= plain.length){ clearInterval(typing); typing = null; tx.innerHTML = html; } }, 22);
   tx.onclick = () => { if (typing){ clearInterval(typing); typing = null; tx.innerHTML = html; } };
-  const tk = runToken; speak(s, w, () => { if (tk===runToken) stopTalk(); });
+  const tk = runToken; speak(s, w, () => { if (tk===runToken) stopTalk(); }, key);
 }
 function nextBtn(on, label){ const b = $('next'); b.classList.toggle('hide', !on); b.textContent = label || 'Próximo ▸'; }
 function startChapter(i){
@@ -940,16 +1063,19 @@ function exec(s){
   const what = curRing==='what';
   $('tw').classList.toggle('hide', !what);
   if (s.t!=='c' && s.t!=='q' && s.t!=='k') $('stage').innerHTML = '';
+  if (s.t==='p') return provaRun(s.ch);
+  if (s.t==='e') return entrevista();
   if (s.t==='a'){ s.f(G); renderViz(true); if (!s.s) return adv(); }
   if (s.t==='s') return suspense(s.s);
-  if (s.s) say(s.w || 'R', s.s, s.mood);
+  if (s.s) say(s.w || 'R', s.s, s.mood, stepKey(si));
   if (s.t==='d' || s.t==='a'){ nextBtn(true); if (what) mission(null); }
   if (s.t==='c'){ concept(s.id); nextBtn(true, 'Entendi ▸'); }
   if (s.t==='q'){ quiz(s); nextBtn(false); }
   if (s.t==='x'){ mission(s); nextBtn(false); setTimeout(() => $('tw').scrollIntoView({behavior:'smooth', block:'start'}), 350); }
   if (s.t==='k'){ conflictUI(); nextBtn(false); }
 }
-$('next').onclick = () => { sfx('key'); adv(); };
+let pendingNext = null;
+$('next').onclick = () => { sfx('key'); if (pendingNext){ const f = pendingNext; pendingNext = null; f(); } else adv(); };
 
 function ringOverlay(r, cb){
   const R = RINGS[r]; sfx('ring');
@@ -957,7 +1083,9 @@ function ringOverlay(r, cb){
   const ov = document.createElement('div'); ov.className = 'ov';
   ov.innerHTML = `<div class="ringov">${gcSVG(r)}<h2>${R.nome}</h2><p>${R.sub}</p><p style="font-size:13px;margin-top:14px">toque para continuar</p></div>`;
   let gone = false; const close = () => { if (gone) return; gone = true; ov.remove(); cb(); };
-  ov.onclick = close; $('layer').append(ov); speak(R.nome + '. ' + R.sub, 'N'); setTimeout(close, 3600);
+  ov.onclick = close; $('layer').append(ov);
+  speak(R.nome + '. ' + R.sub, 'N', () => setTimeout(close, 900), 'anel_' + ({why:'porque',how:'como',what:'oque'})[r]);
+  setTimeout(close, 12000);
 }
 function suspense(text){
   setMode('suspense'); sfx('boom'); shush();
@@ -988,8 +1116,8 @@ function quiz(s){
   st.innerHTML = `<div class="card quiz"><div class="q">${fmt(s.q)}</div>${s.opts.map((o,i)=>`<button class="op" type="button" data-i="${i}">${fmt(o)}</button>`).join('')}</div>`;
   st.querySelectorAll('.op').forEach(b => b.onclick = () => {
     if (stepOk) return; const i = +b.dataset.i;
-    if (i === s.a){ stepOk = true; b.classList.add('ok'); sfx('ok'); say('R', s.ok); nextBtn(true, 'Continuar ▸'); }
-    else { errs++; b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); sfx('err'); say('R', s.no); }
+    if (i === s.a){ stepOk = true; b.classList.add('ok'); sfx('ok'); say('R', s.ok, null, stepKey(si)+'_certo'); nextBtn(true, 'Continuar ▸'); }
+    else { errs++; b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); sfx('err'); say('R', s.no, null, stepKey(si)+'_errado'); }
   });
 }
 function conflictUI(){
@@ -1052,6 +1180,7 @@ function endChapter(){
   if (cur===0){ P.intro = true; save(); sfx('win'); titleCard(); return; }
   const stars = errs <= 1 ? 3 : errs <= 4 ? 2 : 1;
   if (!P.done.includes(cur)) P.done.push(cur); P.stars[cur] = Math.max(P.stars[cur]||0, stars); save();
+  try { parent.postMessage({jogo:'missao-commit', capitulo:cur, estrelas:stars}, '*'); } catch(e){}
   sfx('win'); confetti(60);
   const last = cur === CH.length - 1;
   modal(`<span class="ic">${last ? '🚀' : '🏆'}</span><h3>Capítulo ${cur} concluído!</h3><div class="stars">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div><p>${esc(CH[cur].titulo)}: ${esc(CH[cur].sub)}</p><p style="color:var(--muted);font-size:14px">💎 ${P.tr.length}/7 tesouros</p>`,
@@ -1085,14 +1214,14 @@ function renderHome(){
 }
 $('nome').oninput = e => { P.nome = e.target.value.trim(); save(); };
 function showCert(){
-  const all = P.done.length >= 5, nome = P.nome || 'Seu nome aqui', tot = Object.values(P.stars).reduce((a,b)=>a+b,0);
+  const all = P.done.length >= CH.length - 1, nome = P.nome || 'Seu nome aqui', tot = Object.values(P.stars).reduce((a,b)=>a+b,0);
   const data = new Date().toLocaleDateString('pt-BR');
-  $('certBox').innerHTML = all ? `<div class="seal">🏅</div><h2>Certificado de conclusão</h2><p>Certificamos que</p><div class="nm">${esc(nome)}</div><p>concluiu a <b>Missão Commit: Git e GitHub do zero</b>, com os 5 capítulos: o porquê, o como e o quê do controle de versões.</p><p>⭐ ${tot}/15 estrelas · 💎 ${P.tr.length}/7 tesouros</p><p style="font-size:13px">Mentoria: Rita (analista sênior) · ${data}</p>`
-    : `<div class="seal">🔒</div><h2>Certificado bloqueado</h2><p>Conclua os 5 capítulos para liberar. Você já fez ${P.done.length} de 5.</p>`;
+  $('certBox').innerHTML = all ? `<div class="seal">🏅</div><h2>Certificado de conclusão</h2><p>Certificamos que</p><div class="nm">${esc(nome)}</div><p>concluiu a <b>Missão Commit: Git e GitHub do zero</b>, com os ${CH.length-1} capítulos: o porquê, o como e o quê do controle de versões.</p><p>⭐ ${tot}/15 estrelas · 💎 ${P.tr.length}/7 tesouros</p><p style="font-size:13px">Mentoria: Rita (analista sênior) · ${data}</p>`
+    : `<div class="seal">🔒</div><h2>Certificado bloqueado</h2><p>Conclua os ${CH.length-1} capítulos para liberar. Você já fez ${P.done.length} de ${CH.length-1}.</p>`;
   $('bCopy').classList.toggle('hide', !all);
   show('certS');
 }
-$('bCopy').onclick = () => { const t = `Certificado: ${P.nome || 'Seu nome'} concluiu a Missão Commit: Git e GitHub do zero (5 capítulos).`; try { navigator.clipboard.writeText(t).then(() => toast('Texto copiado ✓'), () => toast('Não deu para copiar aqui.')); } catch(e){ toast('Não deu para copiar aqui.'); } };
+$('bCopy').onclick = () => { const t = `Certificado: ${P.nome || 'Seu nome'} concluiu a Missão Commit: Git e GitHub do zero (${CH.length-1} capítulos).`; try { navigator.clipboard.writeText(t).then(() => toast('Texto copiado ✓'), () => toast('Não deu para copiar aqui.')); } catch(e){ toast('Não deu para copiar aqui.'); } };
 $('bBackHome').onclick = goHome;
 $('bCert').onclick = showCert;
 $('bIntro').onclick = () => { audioInit(); startChapter(0); };
@@ -1105,6 +1234,12 @@ $('bVoz').onclick = () => { P.voz = !P.voz; save(); syncTogs(); if (!P.voz) shus
 $('bMus').onclick = () => { audioInit(); P.mus = !P.mus; save(); syncTogs(); if (AU.mus) AU.mus.gain.setTargetAtTime(P.mus ? .16 : 0, AU.ctx.currentTime, .1); };
 $('bStart').onclick = () => { audioInit(); if (P.intro) goHome(); else startChapter(0); };
 $('bSkip').onclick = () => { audioInit(); P.intro = true; save(); goHome(); };
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || document.getElementById('sus')) return;
+  const ov = document.querySelector('#layer .ov');
+  if (ov){ if (ov.onclick) ov.click(); else { const b = ov.querySelector('.mb .btn'); if (b) b.click(); } return; }
+  if (document.getElementById('play').classList.contains('on')) goHome();
+});
 syncTogs(); gemCount();
 </script>
 </body>
