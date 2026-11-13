@@ -5,10 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Missão Commit — Git e GitHub do zero</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito+Sans:wght@400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <meta name="theme-color" content="#16122B">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#16122B;--ink2:#211B3D;--ink3:#2E2754;--line:#3B3366;--txt:#F2EFFF;--muted:#B3ABD6;--lime:#C6F432;--coral:#FF7A59;--cyan:#2CE5D6;--violet:#A78BFA;--sun:#FFD95E;--gold:#E8B04A;--red:#FF5470;--sky1:#8FD3FF;--sky2:#D7F0FF;--wall:#2B2450}
 *{box-sizing:border-box}html,body{margin:0}
@@ -242,8 +244,47 @@ pre.code .mk{color:var(--red);font-weight:700}pre.code .ours{color:var(--cyan)}p
 .cert h2{font-size:24px}.cert .nm{font-family:'Space Grotesk';font-size:clamp(24px,7vw,36px);color:#7a4a00;margin:12px 0;border-bottom:2px solid var(--gold);display:inline-block;padding:0 10px}
 .cert p{margin:8px 0}
 .cert .seal{font-size:46px}
-.cert{background:none;border:0;padding:0;border-radius:0}
-.cert img{width:100%;max-width:460px;border-radius:14px;box-shadow:0 10px 36px rgba(0,0,0,.45);display:block;margin:0 auto}
+.cert{background:none;border:0;padding:0;border-radius:0;display:flex;flex-direction:column;align-items:center}
+.kc{--grafite:#23262b;--ouro:#c9993f;--ouro2:#a8782c;--ciano:#29a9d6;--muted:#6b6458;font-family:'Nunito Sans',sans-serif;color:var(--grafite)}
+.kc *{box-sizing:border-box}
+.kc.cert{width:min(432px,92vw);aspect-ratio:4/5;position:relative;overflow:hidden;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.kc .in{position:absolute;inset:0;width:1080px;height:1350px;transform:scale(var(--s,.4));transform-origin:0 0;padding:64px 90px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.kc .frame{position:absolute;inset:34px;border:3px solid var(--ouro);border-radius:6px;pointer-events:none}
+.kc .frame::after{content:"";position:absolute;inset:12px;border:1px solid var(--ouro);opacity:.6;border-radius:3px}
+.kc .circ{position:absolute;pointer-events:none;opacity:.55}
+.kc .logo{width:540px;margin-top:30px}
+.kc .kicker{font:600 20px 'JetBrains Mono',monospace;letter-spacing:.35em;color:var(--ouro2);margin-top:30px}
+.kc .certifica{font-size:26px;color:var(--muted);margin-top:32px}
+.kc .nome{font:700 64px 'Fraunces',serif;margin:10px 0 0;border-bottom:2px solid var(--ouro);padding:0 30px 10px}
+.kc .curso{font-size:28px;margin-top:24px;line-height:1.45;max-width:820px}
+.kc .curso b{font-family:'Fraunces',serif;font-size:34px}
+.kc .meta{display:flex;gap:16px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+.kc .chip{font:600 20px 'JetBrains Mono',monospace;border:1.5px solid var(--ouro);color:var(--grafite);padding:8px 18px;border-radius:999px}
+.kc .bloco{width:100%;max-width:860px;text-align:left;margin-top:26px}
+.kc .bloco h3{font:600 19px 'JetBrains Mono',monospace;color:var(--ciano);margin:0 0 10px;letter-spacing:.08em}
+.kc .comp{display:flex;flex-wrap:wrap;gap:10px}
+.kc .comp span{font-size:20px;background:rgba(201,153,63,.14);padding:6px 14px;border-radius:8px}
+.kc .proj{font-size:20px;margin:5px 0;line-height:1.35}
+.kc .proj code{font:400 18px 'JetBrains Mono',monospace;color:var(--ciano)}
+.kc .rodape{position:relative;width:100%;margin-top:auto;padding-top:48px;margin-bottom:40px;display:flex;justify-content:space-between;align-items:flex-end}
+.kc .ass{text-align:center;width:430px}
+.kc .ass .sig{white-space:nowrap;font:400 52px 'Great Vibes',cursive;color:var(--grafite);line-height:1.15;padding-bottom:6px}
+.kc .ass .linha{border-top:1.5px solid var(--grafite);margin-top:6px;padding-top:12px;font-size:21px;line-height:1.5}
+.kc .ass .linha small{display:block;color:var(--muted);font-size:18px;margin-top:2px}
+.kc .verif{display:flex;gap:14px;align-items:flex-end;text-align:right}
+.kc .verif .txt{font:400 16px 'JetBrains Mono',monospace;color:var(--muted);line-height:1.5}
+.kc .verif .txt b{color:var(--grafite);font-weight:600}
+.kc .qr{width:130px;height:130px;background:#fff;padding:8px;border-radius:6px}
+.kc .qr svg{width:100%;height:100%;display:block}
+.kc .livre{position:absolute;bottom:44px;left:0;right:0;font-size:15px;color:var(--muted)}
+.kc .selo{position:absolute;top:115px;right:72px;width:160px;height:160px;border-radius:50%;color:#2b2010;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 18px 'JetBrains Mono',monospace;line-height:1.2;text-align:center;box-shadow:0 0 0 6px rgba(201,153,63,.35);transform:rotate(-12deg)}
+.kc .selo small{font-size:14px;font-weight:600;margin-top:4px}
+/* neutraliza estilos do jogo que vazariam para dentro do certificado */
+.kc .chip{background:none;min-height:0;margin-top:0}
+.kc .chip::before{content:none;display:none}
+.kc code{background:none;padding:0;border-radius:0}
+.kc img{max-width:none}
+.kc h3,.kc b,.kc small{letter-spacing:normal}
 .cert .lock{background:linear-gradient(160deg,#211B3D,#2E2754);border:2px solid var(--line);border-radius:18px;padding:26px 18px;color:var(--txt)}
 .certbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
 .certbtns .btn{font-size:15px;padding:11px 18px}
@@ -1418,17 +1459,56 @@ function renderHome(){
 }
 $('nome').oninput = e => { P.nome = e.target.value.trim(); save(); };
 $('ghUser').oninput = e => { P.gh = e.target.value.trim().replace(/^@/,''); save(); };
-/* ================= CERTIFICADO ================= */
+/* ================= CERTIFICADO (template Kora EduTech) ================= */
 const CURSO = 'Missão Commit: Git e GitHub do zero';
 const COMP_BASE = ['Controle de versões com Git','Registro de mudanças com add e commit','Leitura do histórico do projeto'];
 const COMP_INTER = COMP_BASE.concat(['Comparação de versões e recuperação de arquivos','Ramificações e resolução de conflitos']);
 const COMP_FULL = ['Controle de versões com Git','Registro de mudanças com add e commit','Comparação de versões e recuperação de arquivos','Ramificações e resolução de conflitos','Publicação de repositórios no GitHub'];
-const NIV = {
-  basico:{rotulo:'BÁSICO', selo:'#B87333', fundo:'creme', horas:5, comp:COMP_BASE, circ:false},
-  intermediario:{rotulo:'INTERMEDIÁRIO', selo:'#9AA3AF', fundo:'creme', horas:9, comp:COMP_INTER, circ:false},
-  avancado:{rotulo:'AVANÇADO', selo:'#D4A017', fundo:'creme', horas:14, comp:COMP_FULL, circ:true},
-  portfolio:{rotulo:'PORTFÓLIO COMPLETO · 3 projetos', selo:'#D4A017', fundo:'champanhe', horas:18, comp:COMP_FULL, circ:true}
+const CERT_NIV = {
+  basico:{horas:'5 horas', comp:COMP_BASE},
+  intermediario:{horas:'9 horas', comp:COMP_INTER},
+  avancado:{horas:'14 horas', comp:COMP_FULL},
+  portfolio:{horas:'18 horas', comp:COMP_FULL}
 };
+const KC_LOGO = LOGO;
+const KC_NIVEIS = {
+  basico:        {bg:'#fbf6ee', selo:'BÁSICO', cor:'radial-gradient(circle at 35% 30%,#e9b892,#b87333 60%,#8a5524)'},
+  intermediario: {bg:'#fbf6ee', selo:'INTERMEDIÁRIO', cor:'radial-gradient(circle at 35% 30%,#f4f4f4,#b8bcc2 60%,#868b92)', fs:'14px'},
+  avancado:      {bg:'#fbf6ee', selo:'AVANÇADO', cor:'radial-gradient(circle at 35% 30%,#f3d58a,#c9993f 60%,#a8782c)'},
+  portfolio:     {bg:'linear-gradient(160deg,#f6ecd6 0%,#efe0c2 55%,#e8d6b2 100%)', selo:'PORTFÓLIO<br>COMPLETO<br><small>3 projetos</small>', cor:'radial-gradient(circle at 35% 30%,#f3d58a,#c9993f 60%,#a8782c)'}
+};
+const kcEsc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KC_CIRC = '<path d="M10 10 H90 L120 40 H200" stroke="#c9993f"/><circle cx="200" cy="40" r="5" fill="#c9993f"/><path d="M10 30 H60 L100 70 H170" stroke="#29a9d6"/><circle cx="170" cy="70" r="5" fill="#29a9d6"/>';
+function gerarCertificado(d){
+  const n = KC_NIVEIS[d.nivel];
+  let qr = '';
+  try { const q = qrcode(0,'M'); q.addData(d.urlVerificacao); q.make(); qr = q.createSvgTag({cellSize:4, margin:0, scalable:true}); } catch(e) {}
+  const el = document.createElement('div');
+  el.className = 'kc cert';
+  el.innerHTML = `<div class="in" style="background:${n.bg}">
+    <div class="frame"></div>
+    <svg class="circ" style="left:40px;top:40px" width="220" height="160" viewBox="0 0 220 160" fill="none" stroke-width="2">${KC_CIRC}</svg>
+    <svg class="circ" style="right:40px;top:40px;transform:scaleX(-1)" width="220" height="160" viewBox="0 0 220 160" fill="none" stroke-width="2">${KC_CIRC}</svg>
+    <img class="logo" alt="Kora EduTech" src="${KC_LOGO}">
+    <div class="kicker">CERTIFICADO DE CONCLUSÃO</div>
+    <div class="certifica">Certificamos que</div>
+    <div class="nome">${kcEsc(d.nome)}</div>
+    <div class="curso">concluiu o curso<br><b>${kcEsc(d.curso)}</b></div>
+    <div class="meta"><span class="chip">carga horária: ${kcEsc(d.horas)}</span><span class="chip">concluído em ${kcEsc(d.data)}</span></div>
+    <div class="bloco"><h3>// competências</h3><div class="comp">${d.competencias.map(c=>`<span>${kcEsc(c)}</span>`).join('')}</div></div>
+    ${d.projetos.length ? `<div class="bloco"><h3>// projetos de portfólio</h3>${d.projetos.map((p,i)=>`<div class="proj">${i+1}. ${kcEsc(p.titulo)} — <code>${kcEsc(p.github)}</code></div>`).join('')}</div>` : ''}
+    <div class="rodape">
+      <div class="ass"><div class="sig">Márcia R. Campos</div><div class="linha">Márcia Rodrigues Campos<small>Founder · Kora EduTech</small></div></div>
+      <div class="verif"><div class="txt">verifique em<br><b>${kcEsc(d.textoVerificacao)}</b><br>código <b>${kcEsc(d.codigo)}</b></div><div class="qr">${qr}</div></div>
+    </div>
+    <div class="livre">Curso livre de formação prática.</div>
+    <div class="selo" style="background:${n.cor}${n.fs ? ';font-size:'+n.fs : ''}">${n.selo}</div>
+  </div>`;
+  return el;
+}
+function kcAjusta(){ document.querySelectorAll('.kc.cert').forEach(c => c.style.setProperty('--s', c.clientWidth/1080)); }
+addEventListener('resize', kcAjusta);
+
 function cert4Liberado(){ try { const m = window.__MESTRES_GRIOTS__; return !!(window.__KORA_CERT4__ || (m && m.cert4)); } catch(e){ return false; } }
 function nivelCert(){
   const fez = n => P.done.includes(n);
@@ -1446,8 +1526,8 @@ function codCert(niv){
   const base = (P.nome || 'aluno') + '|' + CURSO + '|' + niv + '|' + Date.now();
   let h1 = 0x811c9dc5, h2 = 0x01000193;
   for (let i = 0; i < base.length; i++){ h1 = ((h1 ^ base.charCodeAt(i)) * 16777619) >>> 0; h2 = (h2 + base.charCodeAt(i) * (i + 7)) >>> 0; }
-  const t = (h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '');
-  P.cod[niv] = 'MC-' + (t + '00000000').slice(0, 8); save(); return P.cod[niv];
+  const t = ((h1.toString(36) + h2.toString(36)).toUpperCase().replace(/[^A-Z0-9]/g, '') + '00000000');
+  P.cod[niv] = 'KE-' + t.slice(0, 4) + '-' + t.slice(4, 8); save(); return P.cod[niv];
 }
 function verifBase(){
   if (window.__KORA_VERIFICA__) return String(window.__KORA_VERIFICA__).replace(/\/+$/, '');
@@ -1455,175 +1535,59 @@ function verifBase(){
   return '';
 }
 function projFeitos(){
-  return (P.proj || []).map(i => PROJ[i]).filter(Boolean).map(pr => ({nome:pr.nome, repo:(P.gh || 'seu-usuario') + '/' + pr.pasta}));
+  return (P.proj || []).map(i => PROJ[i]).filter(Boolean)
+    .map(pr => ({titulo:pr.nome, github:'github.com/' + (P.gh || 'seu-usuario') + '/' + pr.pasta}));
 }
 function loadScript(src){
   return new Promise((ok, no) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = no; document.head.append(el); });
 }
-function wrapTxt(x, txt, max){
-  const ws = String(txt).split(' '), out = []; let ln = '';
-  for (const w of ws){ const t = ln ? ln + ' ' + w : w; if (x.measureText(t).width > max && ln){ out.push(ln); ln = w; } else ln = t; }
-  if (ln) out.push(ln); return out;
+function dadosCert(niv){
+  const N = CERT_NIV[niv], cod = codCert(niv), base = verifBase();
+  return {nivel:niv, nome:P.nome || 'Seu nome aqui', curso:CURSO, horas:N.horas,
+    data:new Date().toLocaleDateString('pt-BR'), competencias:N.comp, projetos:projFeitos(),
+    codigo:cod, urlVerificacao:base ? base + '/' + cod : '',
+    textoVerificacao:base ? base.replace(/^https?:\/\//, '') : 'site da Kora EduTech'};
 }
-function fitPx(x, txt, max, big, small, fam){
-  let sz = big;
-  while (sz > small){ x.font = '700 ' + sz + 'px ' + fam; if (x.measureText(txt).width <= max) break; sz -= 2; }
-  x.font = '700 ' + sz + 'px ' + fam; return sz;
-}
-const GRO = "'Space Grotesk','Nunito',sans-serif", NUN = "'Nunito',sans-serif";
-function drawLogo(x, cx, y, w){
-  return new Promise(ok => {
-    if (!LOGO){
-      x.textAlign = 'center'; x.fillStyle = '#1d1736';
-      x.font = '700 ' + Math.round(w * 0.135) + 'px ' + GRO;
-      try { x.letterSpacing = Math.round(w * 0.02) + 'px'; } catch(e){}
-      x.fillText('KORA EDUTECH', cx, y + w * 0.12);
-      try { x.letterSpacing = '0px'; } catch(e){}
-      return ok(w * 0.2);
-    }
-    const im = new Image();
-    im.onload = () => { const h = w * im.height / im.width; x.drawImage(im, cx - w / 2, y, w, h); ok(h); };
-    im.onerror = () => ok(0);
-    im.src = LOGO;
-  });
-}
-function qrDraw(x, txt, px, py, size){
-  if (typeof qrcode !== 'function') return false;
-  try {
-    const q = qrcode(0, 'M'); q.addData(txt); q.make();
-    const n = q.getModuleCount(), c = size / n;
-    x.fillStyle = '#ffffff'; x.fillRect(px - 6, py - 6, size + 12, size + 12);
-    x.fillStyle = '#1d1736';
-    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) x.fillRect(px + k * c, py + r * c, c + .6, c + .6);
-    return true;
-  } catch(e){ return false; }
-}
-async function certBody(x, niv, off){
-  const N = NIV[niv], W = 1080, M = 96;
-  let y = 112 + off;
-  y += await drawLogo(x, W / 2, y, 360) + 40;
-  x.textAlign = 'center'; x.fillStyle = '#1d1736';
-  x.font = '700 38px ' + GRO;
-  try { x.letterSpacing = '4px'; } catch(e){}
-  x.fillText('Certificado de conclusão', W / 2, y); y += 28;
-  try { x.letterSpacing = '0px'; } catch(e){}
-
-  const rot = N.rotulo; x.font = '700 20px ' + NUN;
-  const pw = x.measureText(rot).width + 46, ph = 44;
-  y += 22; x.fillStyle = N.selo;
-  if (x.roundRect){ x.beginPath(); x.roundRect(W / 2 - pw / 2, y, pw, ph, 22); x.fill(); }
-  else x.fillRect(W / 2 - pw / 2, y, pw, ph);
-  x.fillStyle = '#fffdf7'; x.fillText(rot, W / 2, y + 29); y += ph + 48;
-
-  x.fillStyle = '#4a4466'; x.font = '600 23px ' + NUN;
-  x.fillText('Certificamos que', W / 2, y); y += 54;
-  const nome = P.nome || 'Seu nome aqui';
-  x.fillStyle = '#1d1736'; fitPx(x, nome, W - 2 * M, 56, 26, GRO);
-  x.fillText(nome, W / 2, y);
-  const nw = Math.min(x.measureText(nome).width + 60, W - 2 * M);
-  x.strokeStyle = '#D4A017'; x.lineWidth = 2;
-  x.beginPath(); x.moveTo(W / 2 - nw / 2, y + 16); x.lineTo(W / 2 + nw / 2, y + 16); x.stroke(); y += 62;
-
-  x.fillStyle = '#4a4466'; x.font = '600 23px ' + NUN;
-  x.fillText('concluiu o curso', W / 2, y); y += 48;
-  x.fillStyle = '#1d1736'; fitPx(x, CURSO, W - 2 * M, 34, 22, GRO);
-  wrapTxt(x, CURSO, W - 2 * M).forEach(l => { x.fillText(l, W / 2, y); y += 42; });
-  x.fillStyle = '#4a4466'; x.font = '600 21px ' + NUN;
-  x.fillText('Carga horária: ' + N.horas + ' horas', W / 2, y + 6); y += 56;
-
-  x.textAlign = 'left';
-  x.fillStyle = '#1d1736'; x.font = '700 22px ' + GRO;
-  x.fillText('Competências', M, y); y += 34;
-  x.font = '600 20px ' + NUN; x.fillStyle = '#39334f';
-  N.comp.forEach(c => { x.fillText('•  ' + c, M + 4, y); y += 31; });
-
-  const pfs = projFeitos();
-  if (pfs.length){
-    y += 14; x.fillStyle = '#1d1736'; x.font = '700 22px ' + GRO;
-    x.fillText(pfs.length > 1 ? 'Projetos de portfólio' : 'Projeto de portfólio', M, y); y += 34;
-    x.font = '600 19px ' + NUN; x.fillStyle = '#39334f';
-    pfs.forEach(pr => { x.fillText('•  ' + pr.nome + ' — github.com/' + pr.repo, M + 4, y); y += 30; });
-  }
-
-  y += 44;
-  x.textAlign = 'center'; x.fillStyle = '#1d1736';
-  x.font = "600 50px 'Dancing Script','Brush Script MT',cursive";
-  x.fillText('Márcia Rodrigues Campos', W / 2, y); y += 16;
-  x.strokeStyle = '#b9b2cf'; x.lineWidth = 1.5;
-  x.beginPath(); x.moveTo(W / 2 - 220, y); x.lineTo(W / 2 + 220, y); x.stroke(); y += 28;
-  x.fillStyle = '#4a4466'; x.font = '700 18px ' + NUN;
-  x.fillText('Márcia Rodrigues Campos · Founder · Kora EduTech', W / 2, y);
-  return y;
-}
-async function certCanvas(niv){
-  const N = NIV[niv], W = 1080, H = 1350, M = 96;
-  try { await document.fonts.ready; } catch(e){}
-  const sc = document.createElement('canvas'); sc.width = W; sc.height = H;
-  const fim = await certBody(sc.getContext('2d'), niv, 0);
-  const off = Math.max(0, Math.min(170, Math.round(((H - 268) - fim) / 2)));
-  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-  const x = cv.getContext('2d');
-  if (N.fundo === 'champanhe'){
-    const g = x.createLinearGradient(0, 0, W, H);
-    g.addColorStop(0, '#f6ecd6'); g.addColorStop(.5, '#efe0c2'); g.addColorStop(1, '#e8d6b2'); x.fillStyle = g;
-  } else x.fillStyle = '#fbf6ee';
-  x.fillRect(0, 0, W, H);
-  if (N.circ){
-    x.strokeStyle = 'rgba(38,166,178,.20)'; x.lineWidth = 2;
-    for (let i = 0; i < 7; i++){
-      const y0 = 440 + i * 120;
-      x.beginPath(); x.moveTo(0, y0); x.lineTo(64 + i * 14, y0); x.lineTo(110 + i * 18, y0 - 44); x.lineTo(196, y0 - 44); x.stroke();
-      x.beginPath(); x.arc(196, y0 - 44, 5, 0, 7); x.stroke();
-      x.beginPath(); x.moveTo(W, y0 - 76); x.lineTo(W - 64 - i * 12, y0 - 76); x.lineTo(W - 110 - i * 16, y0 - 32); x.lineTo(W - 196, y0 - 32); x.stroke();
-      x.beginPath(); x.arc(W - 196, y0 - 32, 5, 0, 7); x.stroke();
-    }
-  }
-  x.strokeStyle = '#D4A017'; x.lineWidth = 7; x.strokeRect(36, 36, W - 72, H - 72);
-  x.lineWidth = 2; x.strokeRect(54, 54, W - 108, H - 108);
-  await certBody(x, niv, off);
-  const cod = codCert(niv), base = verifBase(), url = base ? base + '/' + cod : '';
-  let qrOk = false;
-  if (url) qrOk = qrDraw(x, url, W - M - 118, H - 232, 118);
-  x.textAlign = 'left'; x.fillStyle = '#4a4466'; x.font = '600 17px ' + NUN;
-  x.fillText('Emitido em ' + new Date().toLocaleDateString('pt-BR'), M, H - 190);
-  x.fillStyle = '#1d1736'; x.font = "700 20px 'JetBrains Mono',monospace";
-  x.fillText(cod, M, H - 158);
-  x.fillStyle = '#4a4466'; x.font = '600 16px ' + NUN;
-  x.fillText(url ? 'Verifique em ' + url.replace(/^https?:\/\//, '') : 'Código de verificação', M, H - 130);
-  if (url && qrOk){ x.textAlign = 'center'; x.font = '600 14px ' + NUN; x.fillText('verificação', W - M - 59, H - 96); }
-  x.textAlign = 'center'; x.fillStyle = '#6b6486'; x.font = '600 17px ' + NUN;
-  x.fillText('Curso livre de formação prática.', W / 2, H - 82);
-  return cv;
-}
-let certCv = null, certNiv = null;
+let certEl = null, certNiv = null;
 async function showCert(){
   show('certS');
-  const niv = nivelCert(); certNiv = niv;
-  const box = $('certBox'), btns = $('certBtns');
+  const niv = nivelCert(), box = $('certBox'), btns = $('certBtns');
+  certEl = null; certNiv = null;
   if (!niv){
-    certCv = null; btns.classList.add('hide');
-    const caps = CH.length - 1;
-    box.innerHTML = `<div class="lock"><div class="seal">🔒</div><h2>Certificado ainda não liberado</h2><p>Conclua os capítulos 1 e 2 para liberar o primeiro certificado. Você já fez ${P.done.filter(i=>i>0).length} de ${caps}.</p></div>`;
+    btns.classList.add('hide');
+    box.innerHTML = `<div class="lock"><div class="seal">🔒</div><h2>Certificado ainda não liberado</h2><p>Conclua os capítulos 1 e 2 para liberar o primeiro certificado. Você já fez ${P.done.filter(i=>i>0).length} de ${CH.length - 1}.</p></div>`;
     return;
   }
+  let aviso = '';
+  certNiv = niv;
   if (niv === 'portfolio' && !cert4Liberado()){
     certNiv = 'avancado';
-    box.innerHTML = `<div class="lock"><div class="seal">🏆</div><h3>Você concluiu os 3 projetos!</h3><p>O certificado <b>Portfólio completo</b>, o que mostra os três projetos lado a lado, é emitido no site por R$ 9,90.</p><p style="color:var(--muted);font-size:14px">Enquanto isso, o seu certificado <b>Avançado</b> está pronto aqui embaixo.</p></div>`;
-    const aviso = box.innerHTML;
-    btns.classList.remove('hide');
-    certCv = await certCanvas('avancado');
-    box.innerHTML = aviso;
-    const im0 = new Image(); im0.alt = 'Certificado de conclusão — ' + CURSO; im0.src = certCv.toDataURL('image/png');
-    box.append(im0);
-    return;
+    aviso = '<div class="lock" style="margin-bottom:14px"><div class="seal">🏆</div><h3>Você concluiu os 3 projetos!</h3><p>O certificado <b>Portfólio completo</b>, o que mostra os três projetos lado a lado, é emitido no site por R$ 9,90.</p><p style="color:var(--muted);font-size:14px">O seu <b>Avançado</b> está pronto aqui embaixo.</p></div>';
   }
   btns.classList.remove('hide');
-  box.innerHTML = '<div class="lock"><p>Montando o seu certificado…</p></div>';
+  box.innerHTML = aviso + '<div class="lock"><p>Montando o seu certificado…</p></div>';
   if (typeof qrcode !== 'function'){ try { await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js'); } catch(e){} }
-  certCv = await certCanvas(niv);
-  box.innerHTML = '';
-  const im = new Image(); im.alt = 'Certificado de conclusão — ' + CURSO; im.src = certCv.toDataURL('image/png');
-  box.append(im);
+  try { await document.fonts.ready; } catch(e){}
+  certEl = gerarCertificado(dadosCert(certNiv));
+  box.innerHTML = aviso;
+  box.append(certEl);
+  kcAjusta();
+}
+async function certImagem(){
+  if (!certEl) return null;
+  if (typeof html2canvas !== 'function'){
+    try { await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'); }
+    catch(e){ toast('Para baixar, é preciso estar conectado à internet.'); return null; }
+  }
+  const palco = document.createElement('div');
+  palco.style.cssText = 'position:fixed;left:-20000px;top:0;width:1080px;height:1350px';
+  const clone = certEl.cloneNode(true);
+  clone.style.width = '1080px'; clone.style.height = '1350px';
+  clone.style.setProperty('--s', 1);
+  palco.append(clone); document.body.append(palco);
+  try { await document.fonts.ready; } catch(e){}
+  try { return await html2canvas(clone, {scale:1, width:1080, height:1350, backgroundColor:null, logging:false}); }
+  finally { palco.remove(); }
 }
 let dlNS;
 async function downloads(){
@@ -1675,17 +1639,26 @@ function pdfDaImagem(jpg, pw, ph, iw, ih){
   return new Blob([out], {type:'application/pdf'});
 }
 $('bImg').onclick = async () => {
-  if (!certCv) return;
-  await baixar(await cvBlob(certCv, 'image/png'), 'certificado-missao-commit.png');
+  const cv = await certImagem(); if (!cv) return;
+  await baixar(await cvBlob(cv, 'image/png'), 'certificado-missao-commit.png');
 };
 $('bPdf').onclick = async () => {
-  if (!certCv) return;
-  const jpg = b64Bytes(certCv.toDataURL('image/jpeg', .93).split(',')[1]);
-  await baixar(pdfDaImagem(jpg, 595, 744, certCv.width, certCv.height), 'certificado-missao-commit.pdf');
+  const cv = await certImagem(); if (!cv) return;
+  const img = cv.toDataURL('image/png');
+  try {
+    if (!window.jspdf) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({orientation:'portrait', unit:'px', format:[1080, 1350]});
+    pdf.addImage(img, 'PNG', 0, 0, 1080, 1350);
+    pdf.save('certificado-missao-commit.pdf'); toast('PDF baixado ✓');
+  } catch(e){
+    const jpg = b64Bytes(cv.toDataURL('image/jpeg', .93).split(',')[1]);
+    await baixar(pdfDaImagem(jpg, 595, 744, cv.width, cv.height), 'certificado-missao-commit.pdf');
+  }
 };
 $('bShare').onclick = async () => {
-  if (!certCv) return;
-  const blob = await cvBlob(certCv, 'image/png');
+  const cv = await certImagem(); if (!cv) return;
+  const blob = await cvBlob(cv, 'image/png');
   const txt = 'Concluí a ' + CURSO + ' na Kora EduTech.';
   try {
     const f = new File([blob], 'certificado-missao-commit.png', {type:'image/png'});
@@ -1700,7 +1673,7 @@ $('bShare').onclick = async () => {
 $('bLink').onclick = () => {
   if (!certNiv) return;
   const cod = codCert(certNiv), base = verifBase(), d = new Date();
-  const q = new URLSearchParams({startTask:'CERTIFICATION_NAME', name:CURSO + ' — ' + NIV[certNiv].rotulo,
+  const q = new URLSearchParams({startTask:'CERTIFICATION_NAME', name:CURSO,
     organizationName:'Kora EduTech', issueYear:String(d.getFullYear()), issueMonth:String(d.getMonth() + 1), certId:cod});
   if (base) q.set('certUrl', base + '/' + cod);
   window.open('https://www.linkedin.com/profile/add?' + q.toString(), '_blank', 'noopener');
