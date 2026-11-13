@@ -253,6 +253,11 @@ pre.code .mk{color:var(--red);font-weight:700}pre.code .ours{color:var(--cyan)}p
 .passos{margin:6px 0 0;padding-left:22px}
 .passos li{margin:7px 0;line-height:1.5}
 .passos code{font-size:.9em}
+.oficina .fnome{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--ink3);border:1px solid var(--line);border-radius:8px;padding:4px 10px;margin:4px 0 8px;color:var(--cyan)}
+.oficina .cod{background:#0B0918;border:1px solid var(--line);border-radius:12px;padding:12px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;white-space:pre;margin:0;color:#dfe7ff}
+.oficina .notas{margin:10px 0 0;padding-left:20px}
+.oficina .notas li{margin:5px 0;line-height:1.5;font-size:14.5px}
+.oficina .tarefa{margin:12px 0 0;padding:10px 12px;background:rgba(198,244,50,.10);border-left:3px solid var(--lime);border-radius:8px;font-weight:700}
 .combo{position:fixed;right:12px;top:68px;z-index:60;background:linear-gradient(135deg,var(--coral),var(--sun));color:#2a1800;font-family:'Space Grotesk';font-weight:700;padding:8px 14px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.4);transform:scale(.6);opacity:0;transition:transform .22s cubic-bezier(.2,1.6,.4,1),opacity .22s;pointer-events:none}
 .combo.on{transform:scale(1);opacity:1}
 .pts{position:fixed;z-index:60;font-family:'Space Grotesk';font-weight:700;font-size:22px;color:var(--lime);pointer-events:none;animation:subir 1s ease-out forwards;text-shadow:0 2px 10px rgba(0,0,0,.6)}
@@ -839,6 +844,8 @@ const PROJ = [
   brief:'Uma tabela com dados abertos da cidade e um gráfico simples. Use dados oficiais do GDF ou do IBGE.',
   arquivos:{'dados.csv':'regiao,valor\nExemplo,1','README.md':'# Painel de dados de Brasília\nTabela com dados abertos. Fonte: troque pelo site oficial de onde os dados vieram.\n\n## Como usar\nAbra o arquivo dados.csv em uma planilha.'}}
 ];
+const OFICINA = [{1:{titulo:"A sua página, do zero",arquivo:"index.html",codigo:"<!DOCTYPE html>\n<html lang=\"pt-br\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Téo Andrade</title>\n</head>\n<body>\n  <h1>Oi, eu sou o Téo</h1>\n  <p>Estagiário em tecnologia, aprendendo Git e GitHub.</p>\n</body>\n</html>",notas:["`<!DOCTYPE html>` avisa o navegador de que isto é uma página HTML.","`lang=\"pt-br\"` diz o idioma. Ajuda leitores de tela e buscadores.","`<meta charset=\"utf-8\">` é o que faz os acentos aparecerem certos.","`<h1>` é o título principal. Use **um só** por página.","`<p>` é um parágrafo de texto comum."],tarefa:"Crie a pasta **pagina-pessoal**, salve isso em **index.html** e troque o nome e a frase pelos seus. Abra o arquivo no navegador para ver como ficou."},2:{titulo:"Seus links",arquivo:"index.html (antes de </body>)",codigo:"  <h2>Onde me encontrar</h2>\n  <ul>\n    <li><a href=\"https://github.com/seu-usuario\">GitHub</a></li>\n    <li><a href=\"https://www.linkedin.com/in/seu-perfil\">LinkedIn</a></li>\n  </ul>",notas:["`<h2>` é um subtítulo, um degrau abaixo do `<h1>`.","`<ul>` é uma lista; cada `<li>` é um item dela.","`<a href=\"...\">` cria um link. O endereço vai dentro das aspas."],tarefa:"Cole esse trecho antes de `</body>` e troque os endereços pelos seus."},4:{titulo:"O que você sabe fazer",arquivo:"index.html (antes de </body>)",codigo:"  <h2>O que eu sei fazer</h2>\n  <ul>\n    <li>Git e GitHub</li>\n    <li>HTML básico</li>\n  </ul>",notas:["É a parte que o recrutador lê primeiro. Seja concreto.","Liste só o que você consegue mostrar ou explicar numa conversa."],tarefa:"Acrescente essa seção com o que você já sabe hoje. Pode ser pouco: o que vale é ser verdade."},6:{titulo:"O README do seu projeto",arquivo:"README.md",codigo:"# Página pessoal\n\nMinha página de apresentação, feita com HTML.\n\n## Como abrir\nBaixe o repositório e abra o arquivo index.html no navegador.\n\n## Autor\nSeu Nome — github.com/seu-usuario",notas:["README é a primeira coisa que aparece no GitHub. É a porta de entrada.","O `#` faz um título e o `##` um subtítulo. Esse formato se chama Markdown.","Quatro blocos bastam: o que é, como usar, e quem fez."],tarefa:"Crie o arquivo **README.md** na pasta do projeto e escreva o seu, com as suas palavras."}},{1:{titulo:"A página da loja, do zero",arquivo:"index.html",codigo:"<!DOCTYPE html>\n<html lang=\"pt-br\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Padaria do Bairro</title>\n</head>\n<body>\n  <h1>Padaria do Bairro</h1>\n  <p>Pães quentinhos todas as manhãs.</p>\n</body>\n</html>",notas:["`<!DOCTYPE html>` avisa o navegador de que isto é uma página HTML.","`<meta charset=\"utf-8\">` é o que faz os acentos aparecerem certos.","O que está em `<title>` aparece na aba do navegador.","`<h1>` é o nome da loja; `<p>` é a frase de apresentação."],tarefa:"Crie a pasta **loja-de-bairro**, salve isso em **index.html** e troque pelo nome de uma loja que você conhece."},2:{titulo:"Horário e endereço",arquivo:"index.html (antes de </body>)",codigo:"  <h2>Horário</h2>\n  <p>Segunda a sábado, das 6h às 20h.</p>\n\n  <h2>Onde ficamos</h2>\n  <p>Rua Exemplo, 100 — Brasília, DF</p>",notas:["`<h2>` separa a página em seções, e isso ajuda quem lê no celular.","Horário e endereço são o que mais procuram no site de uma loja."],tarefa:"Cole antes de `</body>` e preencha com o horário e o endereço de verdade. Se a loja existe, confirme com a dona antes de publicar."},4:{titulo:"O que a loja vende",arquivo:"index.html (antes de </body>)",codigo:"  <h2>O que vendemos</h2>\n  <ul>\n    <li>Pão francês</li>\n    <li>Bolo de fubá</li>\n    <li>Café coado</li>\n  </ul>",notas:["`<ul>` com `<li>` é a forma mais simples de listar produtos.","Não invente preços. Se for uma loja real, só publique o que a dona confirmar."],tarefa:"Troque pela lista de verdade. Essa é a melhoria que vai no galho **melhoria**."},6:{titulo:"O README do seu projeto",arquivo:"README.md",codigo:"# Site da Padaria do Bairro\n\nSite simples de apresentação de uma loja de bairro, feito com HTML.\n\n## Como abrir\nBaixe o repositório e abra o arquivo index.html no navegador.\n\n## Autor\nSeu Nome — github.com/seu-usuario",notas:["README é a primeira coisa que aparece no GitHub. É a porta de entrada.","O `#` faz um título e o `##` um subtítulo. Esse formato se chama Markdown.","Se o site for de uma loja real, diga isso: trabalho para cliente conta pontos."],tarefa:"Crie o arquivo **README.md** na pasta do projeto e escreva o seu, com as suas palavras."}},{1:{titulo:"A planilha de dados",arquivo:"dados.csv",codigo:"regiao,populacao,ano\nCeilândia,,\nTaguatinga,,\nPlano Piloto,,",notas:["CSV quer dizer valores separados por vírgula. Abre em qualquer planilha.","A primeira linha é o cabeçalho: diz o nome de cada coluna.","Deixei os números em branco de propósito: eles têm que vir de fonte oficial."],tarefa:"Crie a pasta **painel-brasilia**, salve isso em **dados.csv** e preencha com números do IBGE ou da Codeplan. Anote de onde veio cada número e de que ano é."},2:{titulo:"A página que mostra a tabela",arquivo:"index.html",codigo:"<!DOCTYPE html>\n<html lang=\"pt-br\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Painel de dados de Brasília</title>\n</head>\n<body>\n  <h1>Painel de dados de Brasília</h1>\n  <table border=\"1\" cellpadding=\"6\">\n    <tr><th>Região</th><th>População</th><th>Ano</th></tr>\n    <tr><td>Ceilândia</td><td></td><td></td></tr>\n  </table>\n  <p>Fonte: escreva aqui o nome e o link da fonte oficial.</p>\n</body>\n</html>",notas:["`<table>` é a tabela; cada `<tr>` é uma linha.","`<th>` é célula de cabeçalho e `<td>` é célula de dado.","A linha da fonte não é enfeite: sem ela, o painel não vale nada."],tarefa:"Copie para **index.html**, repita a linha `<tr>` para cada região e preencha com os números do seu CSV."},4:{titulo:"Um gráfico de barras sem biblioteca",arquivo:"index.html (antes de </body>)",codigo:"  <h2>Comparação</h2>\n  <div style=\"background:#eee; margin:4px 0\">\n    <div style=\"background:#3f6df5; color:#fff; padding:4px; width:70%\">Ceilândia</div>\n  </div>\n  <div style=\"background:#eee; margin:4px 0\">\n    <div style=\"background:#3f6df5; color:#fff; padding:4px; width:45%\">Taguatinga</div>\n  </div>",notas:["Cada barra é uma `<div>` colorida dentro de outra cinza.","A largura em `%` representa o valor: a maior região fica com 100%.","Para achar a porcentagem: valor dividido pelo maior valor, vezes 100."],tarefa:"Faça uma barra por região, com a largura calculada a partir dos seus números."},6:{titulo:"O README do seu projeto",arquivo:"README.md",codigo:"# Painel de dados de Brasília\n\nTabela e gráfico simples com dados abertos do Distrito Federal.\n\n## Dados\nFonte: (nome do órgão) — (link). Coleta em (mês/ano).\n\n## Como abrir\nBaixe o repositório e abra o arquivo index.html no navegador.\n\n## Autor\nSeu Nome — github.com/seu-usuario",notas:["Em projeto de dados, a seção de fonte é a mais importante do README.","Diga o órgão, o link e quando você coletou. Dado sem fonte não convence.","O `#` faz um título e o `##` um subtítulo. Esse formato se chama Markdown."],tarefa:"Crie o arquivo **README.md** e preencha a fonte com o órgão e o link de onde os números vieram."}}];
+function oficina(n){ const o = OFICINA[P.projAtual]; return (o && o[n]) || null; }
 function pAtual(){ return (P.projAtual === null || P.projAtual === undefined) ? null : PROJ[P.projAtual]; }
 function arqPrinc(p){ return Object.keys(p.arquivos).find(f => f !== 'README.md'); }
 function projPrep(g, ate){
@@ -867,13 +874,16 @@ function projEtapa(n){
   const fim = a => ring('what', a);
   const main = arqPrinc(p), txt = p.arquivos[main], K = i => 'cap' + n + '_proj_' + i;
   const feito = g => { const h = g.br[g.head]; return h ? g.commits[h] : null; };
+  const of = n => { const o = oficina(n); return o ? [{t:'c', id:'arq', w:'R', of:o, s:'Antes do Git, vamos construir. Abra um editor de texto: Bloco de Notas, VS Code, o que você tiver.', k:'cap' + n + '_proj_of'}] : []; };
   if (n === 1) return fim([
+    ...of(1),
     A(g => projPrep(g, 0), 'T', 'Criei a pasta **' + p.pasta + '** no meu computador. Está vazia ainda.', {k:K(1)}),
     X('Ligue o Git na pasta do seu projeto', 'git init', 'Mesmo comando de agora há pouco, só que no **seu** projeto.', g => g.init, 'A partir daqui, o Git guarda o histórico do seu portfólio.', {k:K(2)}),
     D('R', 'Seu portfólio nasceu. No próximo capítulo você tira a primeira foto dele.', {k:K(3)})
   ]);
   if (n === 2) return fim([
-    D('R', 'Agora no **seu** projeto: a primeira foto de verdade.', {k:K(0)}),
+    D('R', 'Agora no **seu** projeto: mais um pedaço da página e a primeira foto de verdade.', {k:K(0)}),
+    ...of(2),
     A(g => { projPrep(g, 1); g.wd[main] = txt; }, 'T', 'Escrevi o arquivo **' + main + '**.', {k:K(1)}),
     X('Ponha o arquivo na caixa', 'git add .', 'O ritual que você acabou de aprender.', g => g.idx[main] === txt, 'add = preparar o que vai entrar na foto.', {k:K(2)}),
     X('Tire a primeira foto do seu projeto', 'git commit -m "' + p.msg + '"', 'Legenda que diz o que você fez.', g => { const c = feito(g); return !!c && c.msg === p.msg; }, 'Esse é o primeiro commit do seu portfólio.', {k:K(3)})
@@ -885,7 +895,8 @@ function projEtapa(n){
     X('Traga a versão boa de volta', 'git restore ' + main, 'Sem drama: o Git guardou a versão boa.', g => g.wd[main] === txt, 'Isso só funciona porque você tirou a foto antes.', {k:K(3)})
   ]);
   if (n === 4) return fim([
-    D('R', 'Toda melhoria no seu projeto merece um universo paralelo.', {k:K(0)}),
+    D('R', 'Toda melhoria no seu projeto merece um universo paralelo. Primeiro, o que você vai acrescentar.', {k:K(0)}),
+    ...of(4),
     A(g => projPrep(g, 2), 'T', 'Abri o meu projeto de novo.', {k:K(1)}),
     X('Crie o galho "melhoria" e entre nele', 'git switch -c melhoria', 'Assim a versão principal continua intacta.', g => g.head === 'melhoria', 'switch -c cria o galho e já te leva pra ele.', {k:K(2)}),
     A(g => { g.wd[main] = txt + '\n<!-- versão melhorada -->'; }, 'T', 'Fiz a melhoria.', {k:K(3)}),
@@ -908,6 +919,7 @@ function projFinal(){
   const K = i => 'cap6_fim_' + i;
   return ring('what', [
     D('R', 'Vamos fechar o **' + p.nome + '**. Falta o README: o arquivo que explica o projeto para quem chega.', {k:K(0)}),
+    ...(oficina(6) ? [{t:'c', id:'arq', w:'R', of:oficina(6), s:'Escreva o README no seu editor, do mesmo jeito que escreveu a página.', k:'cap6_fim_of'}] : []),
     A(g => { projPrep(g, 5); g.wd['README.md'] = p.arquivos['README.md']; }, 'T', 'Escrevi o README com o que é o projeto e como usar.', {k:K(1)}),
     X('Ponha o README na caixa', 'git add .', 'Último ritual deste projeto.', g => g.idx['README.md'] !== undefined, '', {k:K(2)}),
     X('Tire a foto', 'git commit -m "Adiciona README"', 'Legenda simples e direta.', g => { const h = g.br[g.head]; return !!h && g.commits[h].msg === 'Adiciona README'; }, '', {k:K(3)}),
@@ -1239,7 +1251,7 @@ function exec(s){
   if (s.t==='s') return suspense(s.s);
   if (s.s) say(s.w || 'R', s.s, s.mood, stepKey(si));
   if (s.t==='d' || s.t==='a'){ nextBtn(true); if (what) mission(null); }
-  if (s.t==='c'){ concept(s.id); nextBtn(true, 'Entendi ▸'); }
+  if (s.t==='c'){ concept(s.id, s); nextBtn(true, 'Entendi ▸'); }
   if (s.t==='q'){ quiz(s); nextBtn(false); }
   if (s.t==='x'){ mission(s); nextBtn(false); setTimeout(() => $('tw').scrollIntoView({behavior:'smooth', block:'start'}), 350); }
   if (s.t==='k'){ conflictUI(); nextBtn(false); }
@@ -1268,8 +1280,16 @@ function suspense(text){
   speak(text, 'N');
   $('susB').onclick = () => { ov.remove(); adv(); };
 }
-function concept(id){
+function cardArquivo(o){
+  return `<div class="card oficina"><h3>🛠️ ${esc(o.titulo)}</h3>
+    <div class="fnome">${esc(o.arquivo)}</div>
+    <pre class="cod">${esc(o.codigo)}</pre>
+    <ul class="notas">${o.notas.map(n => '<li>' + fmt(n) + '</li>').join('')}</ul>
+    <p class="tarefa">✏️ ${fmt(o.tarefa)}</p></div>`;
+}
+function concept(id, s){
   const st = $('stage'); let h = '';
+  if (id==='arq' && s && s.of) h = cardArquivo(s.of);
   if (id==='gc') h = `<div class="card"><div class="gcwrap">${gcSVG('why')}<div class="gclist"><div><b>Por quê</b>: o propósito. Que problema isso resolve?</div><div><b>Como</b>: a ideia por trás, com analogias.</div><div><b>O quê</b>: os comandos, na prática.</div><small style="color:var(--muted)">Inspirado no Círculo Dourado, de Simon Sinek.</small></div></div></div>`;
   if (id==='caos') h = `<div class="card"><h3>📂 A pasta do Téo</h3><div class="cx caos"><div class="fileic">index.html</div><div class="fileic">index_final.html</div><div class="fileic">index_final_AGORA_VAI.html</div><span class="qm">❓</span></div><p style="text-align:center;color:var(--muted);font-weight:700">Com Git: um arquivo só, e o histórico guardado.</p><div class="timeline"><div><div class="dot" style="animation-delay:.6s"></div></div><div class="ln"></div><div><div class="dot" style="animation-delay:1.1s"></div></div><div class="ln"></div><div><div class="dot" style="animation-delay:1.6s"></div></div></div><div class="timeline"><div class="lab">seg 9h<br>início</div><div class="lab">ter 14h<br>botão</div><div class="lab">qua 18h<br>cor nova</div></div></div>`;
   if (id==='album') h = `<div class="card"><h3>📸 O álbum do projeto</h3><div class="polas"><div class="pola" style="--r:-4deg;animation-delay:.1s"><div class="ph" style="background:#dff3ff">🌱</div>Foto 1<br>primeira versão</div><div class="pola" style="--r:3deg;animation-delay:.6s"><div class="ph" style="background:#fff2c8">🔘</div>Foto 2<br>botão novo</div><div class="pola" style="--r:-2deg;animation-delay:1.1s"><div class="ph" style="background:#e9e0ff">🎨</div>Foto 3<br>cor nova</div></div><p style="text-align:center;margin:12px 0 0;color:var(--muted);font-weight:700">Quer voltar no tempo? É só abrir a foto certa. ⏪</p></div>`;
