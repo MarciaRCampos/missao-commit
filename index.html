@@ -296,6 +296,7 @@ pre.code .mk{color:var(--red);font-weight:700}pre.code .ours{color:var(--cyan)}p
 .oficina .cod{background:#0B0918;border:1px solid var(--line);border-radius:12px;padding:12px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;white-space:pre;margin:0;color:#dfe7ff}
 .oficina .notas{margin:10px 0 0;padding-left:20px}
 .oficina .notas li{margin:5px 0;line-height:1.5;font-size:14.5px}
+.resumo .tarefa{margin:12px 0 0;padding:10px 12px;background:rgba(44,229,214,.10);border-left:3px solid var(--cyan);border-radius:8px;font-weight:700}
 .oficina .tarefa{margin:12px 0 0;padding:10px 12px;background:rgba(198,244,50,.10);border-left:3px solid var(--lime);border-radius:8px;font-weight:700}
 .combo{position:fixed;right:12px;top:68px;z-index:60;background:linear-gradient(135deg,var(--coral),var(--sun));color:#2a1800;font-family:'Space Grotesk';font-weight:700;padding:8px 14px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.4);transform:scale(.6);opacity:0;transition:transform .22s cubic-bezier(.2,1.6,.4,1),opacity .22s;pointer-events:none}
 .combo.on{transform:scale(1);opacity:1}
@@ -984,6 +985,7 @@ const CH = [
   S('CONFLITO! A Rita e o Téo mudaram a MESMA linha.'),
   D('T','Eu quebrei o Git?!',{mood:'panic'}),
   D('R','Não quebrou nada. **Conflito** é o Git sendo educado: ele não sabe qual versão você quer e pergunta. Quem decide é você.',{mus:'calm'}),
+  D('R','E se você travar no meio, tem saída: **git merge --abort** cancela a junção e devolve tudo como estava antes. Nada se perde.',{k:'cap4_abort'}),
   {t:'k', w:'R', s:'Entre <<<<<<< e ======= está a versão da main (a minha). Depois, até >>>>>>>, a sua. Escolha como fica:'},
   X('Avise que o conflito foi resolvido','git add index.html','Agora **git add index.html** pra dizer: "resolvi".', g => g.merging && !g.merging.files.length, 'Depois de resolver, o add marca o arquivo como pronto.'),
   X('Finalize a junção com uma foto','git commit -m "Junta o modo escuro"','E a foto final da junção.', g => !g.merging && g.commits[g.br.main].parent2, 'Esse commit tem dois "pais": a main e a tema-escuro.'),
@@ -1006,8 +1008,12 @@ const CH = [
   D('R','Depois de criar, confirme o e-mail. O GitHub manda um código; sem isso a conta fica pela metade.',{k:'cap5_conta_04'}),
   D('R','E duas coisas de segurança: ligue a verificação em duas etapas nas configurações, e nunca escreva a sua senha dentro de um arquivo do projeto.',{k:'cap5_conta_05'}),
   D('T','Conta criada, e-mail confirmado. Meu usuário é **teo-andrade**.',{mood:'happy',k:'cap5_conta_06'}),
+  D('R','Antes de seguir, duas palavras que você vai ver o tempo todo. **Repositório** é o nome que se dá a um projeto com Git: a pasta mais o álbum inteiro. O seu já existe aqui no computador; agora vamos criar o gêmeo dele no GitHub.',{k:'cap5_repo'}),
+  D('R','E **README** é um arquivo de texto que explica o projeto para quem chega. O GitHub mostra ele na página do repositório. A gente escreve o nosso no capítulo seguinte.',{k:'cap5_readme'}),
   D('R','Agora sim. Quando o GitHub pedir para criar um repositório, dê o nome do projeto, deixe público e **não** marque nada para adicionar README: a sua pasta já tem o histórico.',{k:'cap5_conta_07'}),
   X('Conecte a pasta ao repositório no GitHub','git remote add origin https://github.com/kora-labs/site-kora.git','Primeiro, diga ao Git onde fica o álbum na nuvem. **origin** é só um apelido pro endereço.', g => !!g.remote, 'remote = remoto, longe daqui. Você só faz isso uma vez por projeto.'),
+  D('R','Um detalhe que pega muita gente: o **git init** ainda cria a linha principal com o nome **master**, enquanto o GitHub usa **main**. Se os nomes não baterem, o envio falha.',{k:'cap5_master'}),
+  D('R','A solução é renomear antes de enviar: **git branch -M main**. E, pra nunca mais pensar nisso, rode uma vez **git config --global init.defaultBranch main**: daí todo projeto novo já nasce com main.',{k:'cap5_master2'}),
   X('Envie suas fotos para o GitHub','git push -u origin main','Agora empurre: **git push -u origin main**.', g => g.remote && g.remote.refs.main===g.br.main, 'O -u lembra o caminho. Das próximas vezes, só git push.'),
   D('T','Tá na nuvem! Se meu notebook cair, tá tudo salvo.',{mood:'happy'}),
   A(g => { const keep = {wd:g.wd, idx:g.idx}; g.idx = Object.assign(cp(snap(g)), {'README.md':H.readme}); const id = hid(g); g.commits[id] = {id, msg:'Adiciona README', files:cp(g.idx), parent:g.remote.refs.main, parent2:null, by:'Rita'}; g.remote.refs.main = id; g.wd = keep.wd; g.idx = keep.idx; },'N','9h30. Do computador dela, a Rita envia uma correção direto pro GitHub…'),
@@ -1034,6 +1040,7 @@ const CH = [
   ...ring('how',[
   C('perfil','R','A página de um repositório tem sempre as mesmas partes. Saber ler cada uma já resolve metade das dúvidas.'),
   D('R','E tem um detalhe que pouca gente conhece: se você criar um repositório com o **mesmo nome do seu usuário**, o README dele aparece no topo do seu perfil.'),
+  D('R','Duas condições, e as duas são obrigatórias: o repositório precisa ser **público** e o **README.md** precisa estar na raiz dele, solto, fora de qualquer pasta. Se faltar uma, nada aparece.',{k:'cap6_condicoes'}),
   Q('Qual repositório faz um texto aparecer no topo do seu perfil?',['Um chamado README','Um com o mesmo nome do seu usuário','Qualquer repositório marcado como público'],1,'Isso! Mesmo nome do usuário. É a sua fachada.','Quase: o nome do repositório tem que ser igual ao seu nome de usuário.',{gemNow:true}),
   C('privado','R','Todo repositório é **público** ou **privado**. Escolher errado custa caro nos dois sentidos.'),
   Q('Você tem um arquivo com a senha do banco de dados. O que fazer?',['Deixar no repositório, mas privado','Nunca colocar a senha no repositório','Colocar e apagar depois com um commit'],1,'Isso! Senha não entra no repositório, nem privado. Apagar depois também não resolve: ela fica no histórico.','Cuidado: mesmo apagando depois, a senha continua no histórico. O certo é nunca colocar.')]),
@@ -1158,6 +1165,23 @@ function entrevista(){
     nextBtn(true, 'Encerrar ▸'); pendingNext = adv;
   });
 }
+const RESUMOS = {
+ 1:{itens:['**Por que versionar:** um arquivo só, com todo o histórico, quem mudou e quando.','`git init` liga o Git na pasta e cria o álbum, a pasta escondida `.git`.','`git status` conta o que mudou. Na dúvida, é ele.'],
+    onde:'Todo projeto novo começa assim: entre na pasta e rode git init.'},
+ 2:{itens:['`git add` põe na caixa de preparação; `git commit -m` tira a foto com legenda.','`git log --oneline` mostra o álbum, uma foto por linha.','Cada commit tem um **hash**: a identidade única daquela foto.'],
+    onde:'É o ciclo do dia a dia: mudar, add, commit. Repita a cada parte que ficar funcionando.'},
+ 3:{itens:['`git diff` mostra, linha por linha, o que mudou desde a última foto.','`git restore arquivo` traz a versão boa de volta.','`git status` também avisa quando um arquivo foi apagado.'],
+    onde:'Quando você estragar ou apagar algo sem querer. Só funciona para o que já virou commit: por isso, commit cedo e com frequência.'},
+ 4:{itens:['**Branch** é uma linha paralela para testar sem arriscar a main.','`git switch -c nome` cria e entra; `git switch main` volta.','`git merge nome` junta as duas linhas.','**Conflito** é o Git perguntando qual versão fica; `git merge --abort` cancela a junção.'],
+    onde:'Toda mudança que pode dar errado merece um galho só dela.'},
+ 5:{itens:['**Git** é no seu computador; **GitHub** é a cópia na nuvem.','`git remote add origin <endereço>` liga os dois, uma vez por projeto.','`git push` envia as suas fotos; `git pull` traz as dos outros.','Push recusado quer dizer que falta puxar antes.'],
+    onde:'Todo projeto que você quer guardar fora do computador ou mostrar para alguém.'},
+ 6:{itens:['A página do repositório tem partes fixas: nome, descrição, README, commits, branches e issues.','Repositório com o **mesmo nome do usuário**, público e com README na raiz, vira a capa do seu perfil.','Senha e chave de acesso nunca entram no repositório, nem no privado.','**GitHub Pages** publica um repositório público como site, de graça.'],
+    onde:'Quando alguém procurar o seu nome, é isso que vai encontrar.'},
+ 7:{itens:['**Issue** é o assunto aberto; **pull request** é o pedido de revisão.','O ciclo: galho por assunto, push do galho, pull request, revisão, merge.','`git pull` antes de começar, sempre.'],
+    onde:'Em qualquer equipe e com qualquer linguagem. Esse é o combinado padrão do mercado.'}
+};
+for (let i = 1; i <= 7; i++) if (CH[i] && RESUMOS[i]) CH[i].steps.push({t:'c', id:'resumo', w:'R', r:'what', res:RESUMOS[i], s:'Antes de fechar, o que fica deste capítulo.', k:'cap' + i + '_resumo'});
 CH.forEach((c, ci) => { let n = 0; c.steps.forEach(st => { if (!st.k) st.k = CHKEY[ci] + '_' + String(n++).padStart(2,'0'); }); });
 CH.forEach((c, i) => { if (i > 0) c.steps.unshift({t:'p', ch:i, k:'cap' + i + '_prova'}); });
 CH[CH.length - 1].steps.push({t:'e'});
@@ -1211,6 +1235,7 @@ function exec(s){
   if (s.gemNow && CH[cur].gem) showGem(CH[cur].gem);
   const what = curRing==='what';
   $('tw').classList.toggle('hide', !what);
+  $('mission').classList.toggle('hide', s.t !== 'x');
   if (s.t!=='c' && s.t!=='q' && s.t!=='k') $('stage').innerHTML = '';
   if (s.t==='p') return provaRun(s.ch);
   if (s.t==='e') return entrevista();
@@ -1265,6 +1290,7 @@ function concept(id, s){
   if (id==='galhos') h = `<div class="card galhos"><h3>🌿 Universos paralelos</h3><svg viewBox="0 0 360 130"><line x1="20" y1="90" x2="340" y2="90" stroke="#C6F432" stroke-width="5"/><path class="b2" d="M90 90 C120 90 120 35 160 35 L240 35 C280 35 280 90 300 90" stroke="#FF7A59" stroke-width="5" fill="none"/>
   <circle cx="40" cy="90" r="8" fill="#C6F432" style="animation-delay:.2s"/><circle cx="90" cy="90" r="8" fill="#C6F432" style="animation-delay:.5s"/><circle cx="180" cy="90" r="8" fill="#C6F432" style="animation-delay:1.3s"/><circle cx="170" cy="35" r="8" fill="#FF7A59" style="animation-delay:1.4s"/><circle cx="225" cy="35" r="8" fill="#FF7A59" style="animation-delay:1.8s"/><circle cx="300" cy="90" r="11" fill="#FFD95E" style="animation-delay:2.6s"/>
   <text x="20" y="118" fill="#C6F432" font-family="JetBrains Mono" font-size="12">main</text><text x="150" y="20" fill="#FF7A59" font-family="JetBrains Mono" font-size="12">tema-escuro</text><text x="278" y="118" fill="#FFD95E" font-family="JetBrains Mono" font-size="12">merge</text></svg></div>`;
+  if (id==='resumo' && s && s.res) h = `<div class="card resumo"><h3>✅ O que você aprendeu</h3><ul class="passos">${s.res.itens.map(i=>'<li>'+fmt(i)+'</li>').join('')}</ul><p class="tarefa">📌 ${fmt(s.res.onde)}</p></div>`;
   if (id==='perfil') h = `<div class="card"><h3>🏷️ A página de um repositório</h3><ul class="passos">
     <li><b>Nome e descrição</b>: a primeira frase que explica o que é. Repositório sem descrição parece abandonado.</li>
     <li><b>README</b>: o texto grande que aparece embaixo da lista de arquivos. É a porta de entrada.</li>
@@ -1295,7 +1321,7 @@ Estudante de tecnologia, aprendendo Git e GitHub.
     <li>No menu da esquerda, clique em <b>Pages</b>.</li>
     <li>Em <b>Source</b>, escolha <b>Deploy from a branch</b>.</li>
     <li>Escolha a branch <b>main</b> e a pasta <b>/ (root)</b>. Clique em <b>Save</b>.</li>
-    <li>Espere um ou dois minutos e recarregue: o endereço aparece no topo da própria página.</li>
+    <li>Espere e recarregue a página: o endereço aparece no topo. Costuma levar pouco, mas o GitHub avisa que pode demorar até dez minutos.</li>
   </ol><p style="color:var(--muted);font-weight:700;margin:10px 0 0">No plano gratuito, o Pages só funciona com repositório público.</p></div>`;
   if (id==='issue') h = `<div class="card"><h3>💬 Issue: o assunto aberto</h3><ul class="passos">
     <li>É uma conversa dentro do repositório: um problema, uma ideia ou uma tarefa.</li>
