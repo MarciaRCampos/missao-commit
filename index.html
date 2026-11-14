@@ -8,8 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito+Sans:wght@400;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <meta name="theme-color" content="#16122B">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#16122B;--ink2:#211B3D;--ink3:#2E2754;--line:#3B3366;--txt:#F2EFFF;--muted:#B3ABD6;--lime:#C6F432;--coral:#FF7A59;--cyan:#2CE5D6;--violet:#A78BFA;--sun:#FFD95E;--gold:#E8B04A;--red:#FF5470;--sky1:#8FD3FF;--sky2:#D7F0FF;--wall:#2B2450}
@@ -1440,12 +1438,8 @@ function renderHome(){
 $('nome').oninput = e => { P.nome = e.target.value.trim(); save(); };
 /* ================= CERTIFICADO (template Kora EduTech) ================= */
 const CURSO = 'Missão Commit: Git e GitHub do zero';
-const COMP_BASE = ['Controle de versões com Git','Registro de mudanças com add e commit','Leitura do histórico do projeto'];
-const COMP_INTER = COMP_BASE.concat(['Comparação de versões e recuperação de arquivos','Ramificações e resolução de conflitos']);
 const COMP_FULL = ['Controle de versões com Git','Registro de mudanças com add e commit','Comparação de versões e recuperação de arquivos','Ramificações e resolução de conflitos','Publicação de repositórios no GitHub'];
 const CERT_NIV = {
-  basico:{horas:'5 horas', comp:COMP_BASE},
-  intermediario:{horas:'9 horas', comp:COMP_INTER},
   avancado:{horas:'16 horas', comp:COMP_FULL}
 };
 const KC_LOGO = LOGO;
@@ -1488,12 +1482,8 @@ function kcAjusta(){ document.querySelectorAll('.kc.cert').forEach(c => c.style.
 addEventListener('resize', kcAjusta);
 
 function nivelCert(){
-  const fez = n => P.done.includes(n);
   const caps = []; for (let i = 1; i < CH.length; i++) caps.push(i);
-  if (caps.every(fez)) return 'avancado';
-  if ([1,2,3,4].every(fez)) return 'intermediario';
-  if ([1,2].every(fez)) return 'basico';
-  return null;
+  return caps.every(n => P.done.includes(n)) ? 'avancado' : null;
 }
 function codCert(niv){
   P.cod = P.cod || {};
@@ -1526,7 +1516,8 @@ async function showCert(){
   certEl = null; certNiv = null;
   if (!niv){
     btns.classList.add('hide');
-    box.innerHTML = `<div class="lock"><div class="seal">🔒</div><h2>Certificado ainda não liberado</h2><p>Conclua os capítulos 1 e 2 para liberar o primeiro certificado. Você já fez ${P.done.filter(i=>i>0).length} de ${CH.length - 1}.</p></div>`;
+    const n = P.done.filter(i => i > 0).length, t = CH.length - 1;
+    box.innerHTML = `<div class="lock"><div class="seal">🔒</div><h2>Certificado ainda não liberado</h2><p>O certificado sai quando você concluir o curso inteiro. Você já fez <b>${n} de ${t}</b> capítulos.</p><p style="color:var(--muted);font-size:14px">Faltam ${t - n}. Dá pra fazer um por dia.</p></div>`;
     return;
   }
   certNiv = niv;
