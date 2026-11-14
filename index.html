@@ -1143,7 +1143,10 @@ function provaRun(i){
       nextBtn(true, 'Começar ▸'); pendingNext = () => { pendingNext = null; adv(); };
     }
   };
-  const ask = () => { if (k >= qs.length) return fim(); mc(qs[k], b => { acc += b ? 1 : 0; k++; ask(); }); };
+  let primeira = true;
+  const ask = () => { if (k >= qs.length) return fim();
+    if (primeira){ primeira = false; say('R', 'Pergunta rápida pra conferir o que você aprendeu:', null, 'pergunta'); }
+    mc(qs[k], b => { acc += b ? 1 : 0; k++; ask(); }); };
   ask();
 }
 function skipChap(i){
@@ -1348,7 +1351,7 @@ function conflictUI(){
     if (stepOk) return; stepOk = true; b.classList.add('ok'); sfx('ok');
     G.wd[IDX] = b.dataset.v==='rita' ? H.rita : b.dataset.v==='teo' ? H.teo : H.junto; renderViz(true);
     st.querySelector('pre').innerHTML = esc(G.wd[IDX]);
-    say(b.dataset.v==='junto' ? 'R' : 'T', b.dataset.v==='junto' ? 'Juntar as duas ideias: decisão de sênior! As marcas de conflito sumiram. Agora é avisar o Git.' : 'Escolhido! As marcas de conflito sumiram do arquivo. Agora falta avisar o Git.');
+    say(b.dataset.v==='junto' ? 'R' : 'T', b.dataset.v==='junto' ? 'Juntar as duas ideias: decisão de sênior! As marcas de conflito sumiram. Agora é avisar o Git.' : 'Escolhido! As marcas de conflito sumiram do arquivo. Agora falta avisar o Git.', null, b.dataset.v==='junto' ? 'cap4_k_junto' : 'cap4_k_escolha');
     nextBtn(true, 'Continuar ▸');
   });
 }
