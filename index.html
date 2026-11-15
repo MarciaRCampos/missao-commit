@@ -314,6 +314,19 @@ pre.code .mk{color:var(--red);font-weight:700}pre.code .ours{color:var(--cyan)}p
 .kora.big{justify-content:center;font-size:16px;letter-spacing:4px;color:var(--cyan);margin:0 0 10px}
 .kora.big img{height:112px}
 @media (max-width:560px){.hero{grid-template-columns:1fr}.hero .duo{display:none}.term .out{height:170px}.dlg .txt{font-size:16px}}
+@media (max-height:470px) and (orientation:landscape){
+  #start{padding-top:6px}
+  .kora.big img{height:36px}
+  .kora.big{margin:0 0 2px;font-size:12px}
+  .logo{font-size:clamp(26px,5vh,34px)}
+  .tag{margin:2px 0 6px;font-size:12px}
+  #start .duo{display:none}
+  #start p{margin:0 auto 6px!important;font-size:12px}
+  #start .btn{padding:9px 20px}
+  #start .btn.small{padding:6px 14px}
+  .hero{grid-template-columns:1fr}
+  .hero .duo{display:none}
+}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
 </style>
 </head>
@@ -334,7 +347,7 @@ pre.code .mk{color:var(--red);font-weight:700}pre.code .ours{color:var(--cyan)}p
   <section class="screen on" id="start">
     <div class="kora big" id="logoBig" aria-label="Kora EduTech"></div>
     <div class="logo">Missão <span>Commit</span></div>
-    <div class="tag">Git e GitHub do zero · uma história em 6 capítulos</div>
+    <div class="tag">Git e GitHub do zero · uma história em 11 capítulos</div>
     <div class="duo" id="startDuo"></div>
     <p style="color:var(--muted);font-weight:700;max-width:440px;margin:0 auto 18px">Ligue o som 🔊. Tem música, vozes e alguns sustos pelo caminho.</p>
     <button class="btn" id="bStart" type="button">▶ Começar</button>
@@ -972,7 +985,7 @@ const CH = [
   D('T','E se eu já tiver enviado uma senha sem querer?',{mood:'worried'}),
   D('R','Aí não basta apagar: a foto antiga continua no álbum. O certo é trocar a senha no servidor e nunca mais colocar ela num arquivo do projeto. Por isso se resolve isso **antes**.')]),
   ...ring('how',[
-  C('ignorar','R','Para deixar arquivos de fora existe um arquivo chamado **.gitignore**. Ele fica na raiz do projeto e tem uma regra por linha.'),
+  C('ignorar','R','Para deixar arquivos de fora existe um arquivo chamado **.gitignore**. Ele fica na **raiz** do projeto — que é a pasta principal, a de cima de todas, a mesma onde você rodou o git init — e tem uma regra por linha.'),
   D('R','O nome começa com ponto porque, em muitos computadores, isso quer dizer "arquivo de configuração". Ele vai junto no álbum de propósito: assim o time inteiro ignora as mesmas coisas.'),
   Q('Qual regra deixa de fora todos os arquivos terminados em .log?',['log','*.log','log/'],1,'Isso! O asterisco quer dizer "qualquer nome", e o resto é a terminação.','Quase. Sem o asterisco, o Git procura um arquivo chamado exatamente assim.'),
   D('R','E o erro mais comum: o .gitignore só vale para o que o Git **ainda não cuida**. Se o arquivo já apareceu numa foto, ele continua aparecendo mesmo depois da regra.'),
@@ -1130,7 +1143,8 @@ const CH = [
   D('R','E a paciência que ninguém avisa: depois de ligar, a página **pode demorar até dez minutos** para aparecer. Muita gente acha que errou e fica mexendo. Espere antes de mudar qualquer coisa.'),
   D('R','Outro erro comum: ligar o Pages e esquecer de dar push. O que vai ao ar é o que está no GitHub, não o que está no seu computador.')]),
   ...ring('what',[
-  D('T','Vou publicar o site da Kora Labs no meu repositório de vitrine.'),
+  D('N','Ainda segunda-feira, fim da tarde.',{mus:'calm'}),
+  D('T','Quero uma página minha no ar: um lugar pra mostrar o que eu sei fazer. Criei o repositório **teo-andrade.github.io** só pra isso, com um index.html simples.'),
   X('Envie o site para o GitHub','git push -u origin main','O Pages só publica o que já subiu. Então, primeiro: **git push -u origin main**.', g => g.remote && g.remote.refs.main===g.br.main, 'Agora o GitHub tem o arquivo index.html.'),
   A(g => { g.pages = true; },'T','Fui em **Settings → Pages**, escolhi a branch **main** e a pasta raiz. Apareceu um aviso de que o site está sendo montado.'),
   D('R','Agora espere. Atualize a página do repositório de vez em quando; quando ficar pronto, o próprio GitHub mostra o endereço.'),
@@ -1141,7 +1155,7 @@ const CH = [
 ]},
 { titulo:'Entrando num projeto que já existe', sub:'git clone · trabalhar num repositório dos outros', setup:() => fresh(), gem:'chave', rid:'clone', kbase:'clone', steps:[
   ...ring('why',[
-  D('N','Quinta-feira. Uma mensagem da Rita chega para o Téo.',{mus:'calm'}),
+  D('N','Terça-feira. Uma mensagem da Rita chega para o Téo.',{mus:'calm'}),
   D('R','Téo, preciso de uma ajuda no **guia de estilo** da Kora Labs. O repositório já existe, já tem histórico e três pessoas mexem nele.'),
   D('T','Mas tudo que eu aprendi começou com a pasta vazia no meu computador. Como eu entro num projeto que já começou?',{mood:'worried'}),
   D('R','Com um comando só. E essa é a situação mais comum da vida real: quase ninguém entra numa empresa para começar um projeto do zero. Você chega e o projeto já está andando.')]),
@@ -1165,7 +1179,7 @@ const CH = [
   X('Tire a foto','git commit -m "Define a fonte dos titulos"','Legenda no presente, dizendo o que a mudança faz.', g => { const h = g.br[g.head]; return !!h && g.commits[h].msg==='Define a fonte dos titulos'; }, ''),
   X('Envie o galho para o GitHub','git push -u origin fonte-dos-titulos','Mande o galho para a nuvem.', g => g.remote && g.remote.refs['fonte-dos-titulos']===g.br['fonte-dos-titulos'], 'Pronto: agora o time consegue ver e revisar.', {mus:'win'}),
   D('T','Cheguei num projeto que eu nunca tinha visto e consegui contribuir no mesmo dia.',{mood:'happy'}),
-  D('R','É exatamente assim que começa em qualquer time. Falta uma peça: como essa sua mudança entra no projeto de verdade. É o próximo capítulo.')])
+  D('R','É exatamente assim que começa em qualquer time. Falta uma peça: como uma mudança sua sai do galho e entra no projeto de verdade. Vale para qualquer repositório, e é o próximo capítulo.')])
 ]},
 { titulo:'Trabalhando com outras pessoas', sub:'Issues · pull request · revisão · git pull', setup:() => { const g = hist5(); g.remote = {name:'origin', url:'https://github.com/kora-labs/site-kora.git', refs:{main:g.br.main}}; return g; }, gem:'ponte', rid:'cap7', kbase:'cap7', steps:[
   ...ring('why',[
@@ -1210,19 +1224,19 @@ const CH = [
 /* ===== PROVA RÁPIDA E ENTREVISTA ===== */
 const PROVA = {
  'ignore':[{q:'Para que serve o arquivo .gitignore?', opts:[{t:'Dizer ao Git quais arquivos deixar de fora do álbum', f:'Isso! Senhas, arquivos gerados pela máquina e coisas pesadas ficam de fora.', b:true},{t:'Apagar arquivos da pasta', f:'Ele não apaga nada: os arquivos continuam no seu computador.', b:false},{t:'Esconder o repositório das outras pessoas', f:'Quem decide isso é o repositório ser público ou privado.', b:false}]},
-    {q:'Qual regra deixa de fora todos os arquivos terminados em .log?', opts:[{t:'*.log', f:'Isso! O asterisco vale por qualquer nome.', b:true},{t:'log', f:'Assim o Git procura um arquivo chamado exatamente log.', b:false},{t:'log/', f:'A barra no fim quer dizer pasta.', b:false}]}],
+    {q:'Você pôs senha.txt no .gitignore, mas ele já tinha entrado num commit antigo. O que acontece?', opts:[{t:'Ele continua no álbum: a regra só vale para o que o Git ainda não cuida', f:'Isso! Por isso se decide o que ignorar antes do primeiro commit.', b:true},{t:'Ele some do histórico na hora', f:'O .gitignore não mexe no que já foi fotografado.', b:false},{t:'O Git apaga o arquivo da sua pasta', f:'O .gitignore nunca apaga nada do seu computador.', b:false}]}],
  'mundo':[{q:'Qual é a diferença entre Git e GitHub?', opts:[{t:'Git é o programa no seu computador; GitHub é o site que guarda uma cópia', f:'Isso! Um é a ferramenta, o outro é o lugar.', b:true},{t:'São a mesma coisa, só mudou o nome', f:'São coisas diferentes: dá para usar Git sem nunca usar o GitHub.', b:false},{t:'Git é pago e GitHub é gratuito', f:'O Git é livre e gratuito, e o GitHub tem plano gratuito.', b:false}]},
-    {q:'A Rita enviou mudanças para o GitHub. Como você traz isso para o seu computador?', opts:[{t:'git pull', f:'Isso! pull = puxar.', b:true},{t:'git push', f:'push empurra o seu para lá; você quer o caminho contrário.', b:false},{t:'git status', f:'O status só informa; não traz nada de fora.', b:false}]}],
- 'pages':[{q:'Qual arquivo o GitHub Pages abre primeiro?', opts:[{t:'index.html', f:'Isso! E ele precisa estar na raiz do repositório.', b:true},{t:'pagina.html', f:'O nome importa: os servidores procuram index.html.', b:false},{t:'README.md', f:'O README aparece na página do repositório, não no site publicado.', b:false}]},
+    {q:'Para que serve o git config --global user.email?', opts:[{t:'Dizer qual e-mail assina os seus commits, ligando o trabalho ao seu perfil', f:'Isso! Com o e-mail errado, o seu trabalho aparece como se fosse de outra pessoa.', b:true},{t:'Criar a sua conta no GitHub', f:'A conta se cria no site; o config só configura o Git da sua máquina.', b:false},{t:'Enviar o seu e-mail junto com o projeto', f:'Ele não envia nada: só guarda quem é você nessa máquina.', b:false}]}],
+ 'pages':[{q:'A Ana publicou pelo Pages o repositório portfolio. Qual é o endereço do site dela?', opts:[{t:'ana.github.io/portfolio', f:'Isso! Usuário, github.io e o nome do repositório.', b:true},{t:'github.com/ana/portfolio', f:'Esse é o endereço da página do repositório, não do site publicado.', b:false},{t:'pages.github.com/ana', f:'Esse endereço não existe.', b:false}]},
     {q:'O site publicado mostra o quê?', opts:[{t:'O que já foi enviado ao GitHub com push', f:'Isso! Esquecer o push é o erro mais comum.', b:true},{t:'O que está na pasta do seu computador', f:'O Pages lê o GitHub, não a sua máquina.', b:false},{t:'A última foto, mesmo sem push', f:'Sem push, a foto não saiu do seu computador.', b:false}]}],
  'clone':[{q:'O que o git clone traz?', opts:[{t:'Os arquivos de agora e o álbum inteiro, com todo o histórico', f:'Isso! É o projeto vivo, não uma cópia parada.', b:true},{t:'Só os arquivos de agora', f:'Isso seria baixar um ZIP. O clone traz o histórico junto.', b:false},{t:'Só o histórico, sem os arquivos', f:'Ele traz os dois.', b:false}]},
-    {q:'Depois de clonar, o que você precisa rodar antes de trabalhar?', opts:[{t:'Nada: o clone já cria a pasta e já configura o origin', f:'Isso! init e remote add valem só para projeto que nasce na sua máquina.', b:true},{t:'git init', f:'A pasta já é um repositório desde o clone.', b:false},{t:'git remote add origin', f:'O origin já veio configurado.', b:false}]}],
+    {q:'Você clonou o repositório de um time. Por onde começa a sua parte?', opts:[{t:'Criando um galho com git switch -c e trabalhando nele', f:'Isso! Em projeto de time não se mexe direto na main.', b:true},{t:'Mexendo direto na main, que é a linha principal', f:'A main é a linha que o time inteiro usa; o seu trabalho começa num galho.', b:false},{t:'Rodando git init para começar o seu histórico', f:'O histórico já veio no clone; criar outro desligaria você do time.', b:false}]}],
  'cap1':[{q:'Para que serve o Git?', opts:[{t:'Guardar o histórico de versões do projeto', f:'Isso! Ele guarda o histórico com data e autor.', b:true},{t:'Apagar versões antigas sozinho', f:'Não: o Git guarda as versões, não apaga.', b:false},{t:'Criar sites automaticamente', f:'Não é essa a função. Ele cuida do histórico.', b:false}]},
     {q:'Qual comando liga o Git numa pasta?', opts:[{t:'git init', f:'Isso! init = iniciar o Git na pasta.', b:true},{t:'git start', f:'Esse comando não existe. Use git init.', b:false},{t:'git open', f:'Esse comando não existe. Use git init.', b:false}]}],
  'cap2':[{q:'O que o git add faz?', opts:[{t:'Põe o arquivo na caixa de preparação', f:'Isso! Ainda não é foto: é a caixa.', b:true},{t:'Envia o arquivo para o GitHub', f:'Não: isso é o push, no último capítulo.', b:false},{t:'Apaga o arquivo', f:'Não apaga nada. Só prepara.', b:false}]},
     {q:'Qual é a ordem certa para tirar uma foto?', opts:[{t:'add, depois commit', f:'Isso! Primeiro a caixa, depois a foto.', b:true},{t:'commit, depois add', f:'Quase: primeiro o add, para a caixa ficar pronta.', b:false},{t:'push, depois commit', f:'Não: o push vem por último, para enviar.', b:false}]}],
  'cap3':[{q:'Como ver o que mudou na pasta, linha por linha?', opts:[{t:'git diff', f:'Isso! Linha com menos saiu, com mais entrou.', b:true},{t:'git push', f:'Não: o push envia para o GitHub.', b:false},{t:'git init', f:'Não: o init só liga o Git.', b:false}]},
-    {q:'Como trazer de volta um arquivo estragado?', opts:[{t:'git restore nome-do-arquivo', f:'Isso! Ele volta para a versão da última foto.', b:true},{t:'git commit -m "volta"', f:'Cuidado: o commit salvaria o estrago.', b:false},{t:'git remote', f:'Não: o remote liga o GitHub.', b:false}]}],
+    {q:'O git diff mostra o quê?', opts:[{t:'O que mudou entre a última foto e o arquivo de agora', f:'Isso! É a comparação entre o que está salvo e o que está na sua frente.', b:true},{t:'A lista de todas as fotos já tiradas', f:'Essa é a do git log.', b:false},{t:'Os arquivos que ainda não entraram na caixa', f:'Essa é a do git status.', b:false}]}],
  'cap4':[{q:'Para que serve uma branch?', opts:[{t:'Testar uma ideia sem mexer na versão principal', f:'Isso! É um universo paralelo.', b:true},{t:'Apagar o histórico', f:'Não: a branch cria uma linha nova.', b:false},{t:'Enviar para o GitHub', f:'Não: isso é o push.', b:false}]},
     {q:'O que é um conflito no merge?', opts:[{t:'Duas mudanças na mesma linha, e você decide qual fica', f:'Isso! O Git pergunta, e quem decide é você.', b:true},{t:'Um erro que apaga o projeto', f:'Não apaga nada. Só pede a sua decisão.', b:false},{t:'Um comando que cancela o merge', f:'Não é um comando. É uma pergunta do Git.', b:false}]}],
  'cap5':[{q:'Qual comando envia suas fotos para o GitHub?', opts:[{t:'git push', f:'Isso! push = enviar.', b:true},{t:'git pull', f:'Pull traz do GitHub. Para enviar, use push.', b:false},{t:'git init', f:'Não: o init só liga o Git.', b:false}]},
@@ -1933,7 +1947,31 @@ $('bMus').onclick = () => { audioInit(); P.mus = !P.mus; save(); syncTogs(); if 
 $('bStart').onclick = () => { audioInit(); if (P.intro) goHome(); else startChapter(0); };
 $('bSkip').onclick = () => { audioInit(); P.intro = true; save(); goHome(); };
 document.addEventListener('keydown', e => {
-  if (e.key !== 'Escape' || document.getElementById('sus')) return;
+  const alvo = e.target;
+  if (alvo && (alvo.tagName === 'INPUT' || alvo.tagName === 'TEXTAREA' || alvo.isContentEditable)) return;
+  const k = e.key;
+  // M liga e desliga a música, em qualquer tela
+  if (k === 'm' || k === 'M'){ e.preventDefault(); $('bMus').click(); return; }
+  // 1, 2 e 3 escolhem as opções na tela
+  if (k === '1' || k === '2' || k === '3'){
+    const ops = [...document.querySelectorAll('#layer .ov .op, #play .op, #sus .op, #relampS .op')].filter(o => o.offsetParent && !o.disabled);
+    const o = ops[Number(k) - 1];
+    if (o){ e.preventDefault(); o.click(); return; }
+  }
+  // Enter e Espaço avançam
+  if (k === 'Enter' || k === ' ' || k === 'Spacebar'){
+    const ov = document.querySelector('#layer .ov');
+    if (ov){ e.preventDefault(); if (ov.onclick) ov.click(); else { const b = ov.querySelector('.mb .btn'); if (b) b.click(); } return; }
+    const cands = ['sus', 'next', 'bStart'].map(id => document.getElementById(id))
+      .concat([...document.querySelectorAll('#sus .btn')]);
+    for (const el of cands){
+      if (!el) continue;
+      const b = el.id === 'sus' ? el.querySelector('.btn:not(.hide)') : el;
+      if (b && b.offsetParent && !b.classList.contains('hide')){ e.preventDefault(); b.click(); return; }
+    }
+    return;
+  }
+  if (k !== 'Escape' || document.getElementById('sus')) return;
   const ov = document.querySelector('#layer .ov');
   if (ov){ if (ov.onclick) ov.click(); else { const b = ov.querySelector('.mb .btn'); if (b) b.click(); } return; }
   if (document.getElementById('relampS').classList.contains('on')){ pararRelamp(); return goHome(); }
