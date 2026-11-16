@@ -29,6 +29,12 @@ LER = """() => {
     caps: CH.map((c,i) => ({i, titulo:c.titulo, rid:c.rid, kbase:c.kbase, koff:c.koff,
                             steps:c.steps.map(F)})),
     audio: typeof AUDIO_KEYS !== 'undefined' ? AUDIO_KEYS : [],
+    chavesSoltas: (() => { const t = document.documentElement.outerHTML; const r = new Set();
+      for (const m of t.matchAll(/'(cap[0-9]+_k_[a-z]+)'/g)) r.add(m[1]);
+      for (const m of t.matchAll(/say\\([^;]*?'([a-z0-9_]+)'\\s*\\)/g)) r.add(m[1]);
+      for (const m of t.matchAll(/'(anel_[a-z]+)'/g)) r.add(m[1]);
+      for (const m of t.matchAll(/stepKey\\(si\\)\\s*\\+\\s*'(_[a-z]+)'/g)) r.add(m[1]);
+      return [...r]; })(),
     textoTela: document.body.innerText
   };
 }"""
@@ -93,6 +99,7 @@ def checar(d):
 
     # ---------- 3. chaves de áudio ----------
     ks = [s['k'] for c in caps for s in c['steps'] if s.get('k')]
+    ks += d.get('chavesSoltas', [])   # chaves usadas direto no código, fora dos passos
     for k in set(ks):
         if ks.count(k) > 1:
             erro('audio', f"chave de áudio duplicada: {k}")
